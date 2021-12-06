@@ -9,63 +9,74 @@ using namespace std;
 
 class NewGame {
 private:
-	int newNum;
+	double newSize;
 	double newPrice;
-	double newHrs;
+	double newRate;
 	string newName;
-	string newCat;
+	string newPub;
+	string newDev;
+	string newGenre;
 
 public:
 	NewGame() {
-		newNum = 0;
+		newSize = 0;
 		newPrice = 0.0;
-		newHrs = 0.0;
+		newRate = 0.0;
 		newName = "";
-		newCat = "";
+		newPub = "";
+		newDev = "";
+		newGenre = "";
 	}
 
-	int getNewNum() {
-		return newNum;
+	double getNewSize() {
+		return newSize;
 	}
 	double getNewPrice() {
 		return newPrice;
 	}
+	double getNewRate() {
+		return newRate;
+	}
 	string getNewName() {
 		return newName;
 	}
-	string getNewCat() {
-		return newCat;
+	string getNewGenre() {
+		return newGenre;
 	}
 
-	void setNewNum(int num) {
-		newNum = num;
+	void setNewSize(double size) {
+		newSize = size;
 	}
 	void setNewPrice(double price) {
 		newPrice = price;
 	}
-	void setNewHrs(double hrsPlayed) {
-		newHrs = hrsPlayed;
+	void setNewRate(double rating) {
+		newRate = rating;
 	}
-	void setNewCat(string category) {
-		newCat = category;
+	void setNewCat(string genre) {
+		newGenre = genre;
 	}
 	void setNewName(string name) {
 		newName = name;
 	}
-	void setAllNew(int num, double price, double hrsPlayed, string category, string name) {
-		newNum = num;
-		newPrice = price;
-		newHrs = hrsPlayed;
-		newCat = category;
+	void setAllNew(string name, double price, string publisher, string developer, string genre, double size, double rating) {
 		newName = name;
+		newPrice = price;
+		newPub = publisher;
+		newDev = developer;
+		newGenre = genre;
+		newSize = size;
+		newRate = rating;
 	}
 
 	void displayNewGame() {
-		cout << "Inventory #: " << newNum << endl;
-		cout << "Game: " << newName << endl;
+		cout << "Name: " << newName << endl;
 		cout << "Price: $" << newPrice << endl;
-		cout << "Category: " << newCat << endl;
-		cout << "Hours played: " << newHrs << endl;
+		cout << "Publisher: " << newPub << endl;
+		cout << "Developer: " << newDev << endl;
+		cout << "Genre: " << newGenre << endl;
+		cout << "Size: " << newSize << endl;
+		cout << "Rating: " << newRate << endl;
 	}
 	
 };

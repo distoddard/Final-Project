@@ -9,64 +9,65 @@ using namespace std;
 
 class Inventory {
 private:
-	int invNum;
+	double invSize;
 	double invPrice;
-	double invHrs;
+	double invRate;
 	string invName;
-	string invCat;
+	string invPub;
+	string invDev;
+	string invGenre;
 	
 
 public:
 	Inventory() {
-		invNum = 0;
+		invSize = 0;
 		invPrice = 0.0;
-		invHrs = 0.0;
+		invRate = 0.0;
 		invName = "";
-		invCat = "";
+		invPub = "";
+		invDev = "";
+		invGenre = "";
 	}
+	
+	void storeInvItem(string name, double price, string pub, string dev, string genre, double size, double rating);
+	void displayInv();
+	string getInvName();
+	string getInvGenre();
+	double getInvSize();
+	double getInvPrice();
+	double getInvRate();
+	string getInvPub();
+	string getInvDev();
 
-	int getInvNum() {
-		return invNum;
-	}
-	double getInvPrice() {
-		return invPrice;
-	}
-	double getInvHrs() {
-		return invHrs;
-	}
-	string getInvName() {
-		return invName;
-	}
-	string getInvCat() {
-		return invCat;
-	}
-
-	void setInvNum(int num) {
-		invNum = num;
+	void setInvSize(double size) {
+		invSize = size;
 	}
 	void setInvPrice(double price) {
 		invPrice = price;
 	}
-	void setInvHrs(double hrsPlayed) {
-		invHrs = hrsPlayed;
+	void setInvRate(double rating) {
+		invRate = rating;
 	}
 	void setInvName(string name) {
 		invName = name;
 	}
-	void setInvCat(string category) {
-		invCat = category;
+	void setInvPub(string publisher) {
+		invPub = publisher;
 	}
-	void setInvAll(int num, double price, string name, string category) {
-		invNum = num;
-		invPrice = price;
+	void setInvDev(string developer) {
+		invDev = developer;
+	}
+	void setInvCat(string genre) {
+		invGenre = genre;
+	}
+	void setInvAll(string name, double price, string publisher, string developer, string genre, double size, double rating) {
 		invName = name;
-		invCat = category;
-	}
-	void displayInv() {
-		cout << "Name: " << invName << endl;
-		cout << "Inventory #: " << invNum << endl;
-		cout << "Price: $" << invPrice << endl;
-		cout << "Category: " << invCat << endl;
+		invPrice = price;
+		invPub = publisher;
+		invDev = developer;
+		invGenre = genre;
+		invSize = size;
+		invRate = rating;
 	}
 };
 

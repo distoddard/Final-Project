@@ -1,6 +1,8 @@
 //Daniel Stoddard
 //CIS 1202 - 800
 //December 2, 2021
+//Nintendo Switch Indie Game Inventory Manager
+//description goes here
 
 #include <iostream>
 #include <iomanip>
@@ -20,6 +22,7 @@ void searchGenres(vector<Inventory>, vector<string>, vector<string>, vector<stri
 void showBacklog(vector<Inventory>);
 void showTopRated(vector<Inventory>);
 void searchPublisher(vector<Inventory>, string);
+void searchByDeveloper(vector<Inventory>, string);
 
 template<class S>
 double getTotalSizeNeeded(S inventory) {
@@ -102,6 +105,10 @@ int main() {
 		searchPublisher(inventory, pubSearch);
 		break;
 	case 10:
+		cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
+		cin.ignore(50, '\n');
+		getline(cin, devSearch);
+		searchPublisher(inventory, devSearch);
 		break;
 	case 11:
 		break;
@@ -235,7 +242,19 @@ void searchPublisher(vector<Inventory> inventory, string pubSearch) {
 	if (found != true)
 		cout << "No games found published by '" << pubSearch << "'. Please check the spelling, or get some!" << endl;
 }
-
+void searchDeveloper(vector<Inventory> inventory, string devSearch) {
+	bool found = false;
+	cout << "Showing all owned games published by '" << devSearch << "' and their publishers" << endl;
+	cout << "----------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < inventory.size(); i++) {
+		if (inventory[i].getInvDev() == devSearch) {
+			cout << setw(40) << right << inventory[i].getInvName() << " - " << setw(40) << left << inventory[i].getInvPub() << endl;
+			found = true;
+		}
+	}
+	if (found != true)
+		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
+}
 
 
 /*while (getline(readNames, name)) {

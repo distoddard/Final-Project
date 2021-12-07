@@ -42,11 +42,10 @@ void Inventory::displayNewGame() {
 	cout << "Publisher: " << newPub << endl;
 	cout << "Developer: " << newDev << endl;
 	cout << "Genre: " << newGenre << endl;
-	cout << "Size: " << newSize << endl;
-	if (invSize > 32)
-		cout << "Size: " << invSize << " MB" << endl;
+	if (newSize > 32)
+		cout << "Size: " << newSize << " MB" << endl;
 	else
-		cout << "Size: " << invSize << " GB" << endl;
+		cout << "Size: " << newSize << " GB" << endl;
 	cout << "Rating: " << newRate << endl;
 }
 

@@ -23,7 +23,7 @@ void showBacklog(vector<Inventory>);
 void showTopRated(vector<Inventory>);
 void searchPublisher(vector<Inventory>, string);
 void searchByDeveloper(vector<Inventory>, string);
-void addNewGame(vector<Inventory>, vector<string>, vector<string>, vector<string>);
+void addNewGame(vector<Inventory> &, vector<string>, vector<string>, vector<string>);
 
 template<class S>
 double getTotalSizeNeeded(S inventory) {
@@ -262,8 +262,8 @@ void searchDeveloper(vector<Inventory> inventory, string devSearch) {
 	if (found != true)
 		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void addNewGame(vector<Inventory> inventory, vector<string> genres1, vector<string> genres2, vector<string> genres3) {
-	Inventory tempSlot;
+void addNewGame(vector<Inventory> &inventory, vector<string> genres1, vector<string> genres2, vector<string> genres3) {
+	Inventory tempSlot, tempSlot2;
 	string name, pub, dev, genre1c, genre2c, genre3c, fullGenre;
 	string genre1[] = {"Action", "Strategy", "Turn - Based", "Simulation"};
 	string genre2[] = {" Adventure", " Platformer", " Arcade", " Deck-Builder", " Puzzle"};
@@ -271,41 +271,41 @@ void addNewGame(vector<Inventory> inventory, vector<string> genres1, vector<stri
 	int genre1m, genre2m, genre3m;
 	double price, size, rating;
 	cout << "Name of the game you would like to add:" << endl;
-	cin.ignore(100, '\n');
+	cin.ignore(50, '\n');
 	getline(cin, name);
 	cout << "\nPrice of the game (not the sale price):" << endl;
 	cin >> price;
-	cout << "\nPublisher: ";
 	cin.ignore(100, '\n');
+	cout << "\nPublisher:" << endl;
 	getline(cin, pub);
-	cout << "\nDeveloper: ";
-	cin.ignore(100, '\n');
+	cout << "\nDeveloper:" << endl;
 	getline(cin, dev);
+	cout << "Enter the number that corresponds with your choice for each genre category" << endl;
 	cout << "1st genre category (of 3)" << endl;
-	cout << "Enter the number that corresponds with your choice" << endl;
 	cout << "1.Action |2. Strategy |3. Turn-Based |4. Simulation" << endl;
 	cin >> genre1m;
-	genre1c = genre1[genre1m];
-	cout << "2nd genre category (of 3)";
-	cout << "Enter the number that corresponds with your choice" << endl;
+	genre1c = genre1[genre1m - 1];
+	cout << "2nd genre category (of 3)" << endl;
 	cout << "1.Adventure |2. Platformer |3. Arcade |4. Deck-Builder |5. Puzzle" << endl;
 	cin >> genre2m;
-	genre2c = genre2[genre2m];
-	cout << "3rd genre category: ";
+	genre2c = genre2[genre2m - 1];
+	cout << "3rd genre category (last)" << endl;
 	cout << "1. Roguelike |2. Fighting |3. RPG |4. Platformer |5. Survival |6. Exploration |7. Lifestyle" << endl;
 	cin >> genre3m;
-	genre3c = genre3[genre3m];
+	genre3c = genre3[genre3m - 1];
 	fullGenre = genre1c.append(genre2c);
 	fullGenre.append(genre3c);
 	cout << "Size of the game: ";
 	cin >> size;
 	cout << "Personal rating out of 5 (use 0 if not played enough to rate): ";
 	cin >> rating;
-	tempSlot.setNewInvItem(name, price, pub, dev, fullGenre, size, rating);
+	tempSlot.storeInvItem(name, price, pub, dev, fullGenre, size, rating);
 	inventory.push_back(tempSlot);
+	tempSlot2.setNewInvItem(name, price, pub, dev, fullGenre, size, rating);
 	cout << "\nThis is what you entered:" << endl;
 	cout << "------------------------------------------" << endl;
-	tempSlot.displayNewGame();
+	tempSlot2.displayNewGame();
+	cout << "\n\n";
 }
 
 

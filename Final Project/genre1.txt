@@ -45,7 +45,7 @@ Action
 Action
 Sports
 Action
-Simulatioin
+Simulation
 Action
 Strategy
 Action
@@ -92,7 +92,7 @@ Strategy
 Action
 Action
 Turn-Based
-Simulatioin
+Simulation
 Action
 Turn-Based
 Action
@@ -107,6 +107,6 @@ Action
 Action
 Action
 Action
-Simulatioin
+Simulation
 Action
 Action

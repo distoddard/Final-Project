@@ -266,8 +266,8 @@ void addNewGame(vector<Inventory> &inventory, vector<string> genres1, vector<str
 	Inventory tempSlot, tempSlot2;
 	string name, pub, dev, genre1c, genre2c, genre3c, fullGenre;
 	string genre1[] = {"Action", "Strategy", "Turn - Based", "Simulation"};
-	string genre2[] = {" Adventure", " Platformer", " Arcade", " Deck-Builder", " Puzzle"};
-	string genre3[] = {" Roguelike", " Fighting", " RPG", " Platformer", " Survival", " Exploration", " Lifestyle"};
+	string genre2[] = {"Adventure", "Platformer", "Arcade", "Deck-Builder", "Puzzle"};
+	string genre3[] = {"Roguelike", "Fighting", "RPG", "Platformer", "Survival", "Exploration", "Lifestyle"};
 	int genre1m, genre2m, genre3m;
 	double price, size, rating;
 	cout << "Name of the game you would like to add:" << endl;
@@ -293,8 +293,7 @@ void addNewGame(vector<Inventory> &inventory, vector<string> genres1, vector<str
 	cout << "1. Roguelike |2. Fighting |3. RPG |4. Platformer |5. Survival |6. Exploration |7. Lifestyle" << endl;
 	cin >> genre3m;
 	genre3c = genre3[genre3m - 1];
-	fullGenre = genre1c.append(genre2c);
-	fullGenre.append(genre3c);
+	fullGenre = genre1c + " " + genre2c + " " + genre3c;
 	cout << "Size of the game: ";
 	cin >> size;
 	cout << "Personal rating out of 5 (use 0 if not played enough to rate): ";
@@ -306,6 +305,18 @@ void addNewGame(vector<Inventory> &inventory, vector<string> genres1, vector<str
 	cout << "------------------------------------------" << endl;
 	tempSlot2.displayNewGame();
 	cout << "\n\n";
+
+	fstream writeNames, writePrices, writePubs, writeDevs, writeGenre1, writeGenre2, writeGenre3, writeSizes, writeRatings;
+
+	writeNames.open("names.txt", ios::out | ios::app); writePrices.open("prices.txt", ios::out | ios::app); writePubs.open("pubs.txt", ios::out | ios::app);
+	writeDevs.open("devs.txt", ios::out | ios::app); writeGenre1.open("genre1.txt", ios::out | ios::app); writeGenre2.open("genre2.txt", ios::out | ios::app);
+	writeGenre3.open("genre3.txt", ios::out | ios::app); writeSizes.open("sizes.txt", ios::out | ios::app); writeRatings.open("ratings.txt", ios::out | ios::app);
+
+	writeNames << name; writePrices << price; writePubs << pub; writeDevs << dev;
+	writeGenre1 << genre1c; writeGenre2 << genre2c; writeGenre3 << genre3c; writeSizes << size; writeRatings << rating;
+
+	writeNames.close(); writePrices.close(); writePubs.close(); writeDevs.close(); writeGenre1.close();
+	writeGenre2.close(); writeGenre3.close(); writeSizes.close(); writeRatings.close();
 }
 
 

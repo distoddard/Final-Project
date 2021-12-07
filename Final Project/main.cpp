@@ -23,7 +23,8 @@ void showBacklog(vector<Inventory>);
 void showTopRated(vector<Inventory>);
 void searchPublisher(vector<Inventory>, string);
 void searchByDeveloper(vector<Inventory>, string);
-void addNewGame(vector<Inventory> &, vector<string>, vector<string>, vector<string>);
+void addNewGame(vector<Inventory> &, vector<string> &, vector<string> &, vector<string> &);
+void writeInvToFiles(vector<Inventory>&, vector<string>&, vector<string>&, vector<string>&);
 
 template<class S>
 double getTotalSizeNeeded(S inventory) {
@@ -262,7 +263,7 @@ void searchDeveloper(vector<Inventory> inventory, string devSearch) {
 	if (found != true)
 		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void addNewGame(vector<Inventory> &inventory, vector<string> genres1, vector<string> genres2, vector<string> genres3) {
+void addNewGame(vector<Inventory> &inventory, vector<string> &genres1, vector<string> &genres2, vector<string> &genres3) {
 	Inventory tempSlot, tempSlot2;
 	string name, pub, dev, genre1c, genre2c, genre3c, fullGenre;
 	string genre1[] = {"Action", "Strategy", "Turn - Based", "Simulation"};
@@ -317,6 +318,19 @@ void addNewGame(vector<Inventory> &inventory, vector<string> genres1, vector<str
 
 	writeNames.close(); writePrices.close(); writePubs.close(); writeDevs.close(); writeGenre1.close();
 	writeGenre2.close(); writeGenre3.close(); writeSizes.close(); writeRatings.close();
+}
+
+
+void writeInvToFiles(vector<Inventory>& inventory, vector<string>& genres1, vector<string>& genres2, vector<string>& genres3) {
+	fstream writeNames, writePrices, writePubs, writeDevs, writeGenre1, writeGenre2, writeGenre3, writeSizes, writeRatings;
+
+	writeNames.open("names.txt", ios::out); writePrices.open("prices.txt", ios::out); writePubs.open("pubs.txt", ios::out);
+	writeDevs.open("devs.txt", ios::out); writeGenre1.open("genre1.txt", ios::out); writeGenre2.open("genre2.txt", ios::out);
+	writeGenre3.open("genre3.txt", ios::out); writeSizes.open("sizes.txt", ios::out); writeRatings.open("ratings.txt", ios::out);
+
+	for (int i = 0; i < inventory.size(); i++) {
+		
+	}
 }
 
 

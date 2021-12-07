@@ -11,6 +11,14 @@ void Inventory::storeInvItem(string name, double price, string pub, string dev, 
 	invGenre = genre;
 	invSize = size;
 	invRate = rating;
+}void Inventory::setNewInvItem(string name, double price, string pub, string dev, string genre, double size, double rating) {
+	newName = name;
+	newPrice = price;
+	newPub = pub;
+	newDev = dev;
+	newGenre = genre;
+	newSize = size;
+	newRate = rating;
 }
 
 void Inventory::displayInv() {
@@ -27,6 +35,19 @@ void Inventory::displayInv() {
 		cout << "Size: " << invSize << " GB" << endl;
 	cout << "Rating (out of 5): " << invRate << endl << endl;
 	
+}
+void Inventory::displayNewGame() {
+	cout << "Name: " << newName << endl;
+	cout << "Price: $" << newPrice << endl;
+	cout << "Publisher: " << newPub << endl;
+	cout << "Developer: " << newDev << endl;
+	cout << "Genre: " << newGenre << endl;
+	cout << "Size: " << newSize << endl;
+	if (invSize > 32)
+		cout << "Size: " << invSize << " MB" << endl;
+	else
+		cout << "Size: " << invSize << " GB" << endl;
+	cout << "Rating: " << newRate << endl;
 }
 
 string Inventory::getInvName() {

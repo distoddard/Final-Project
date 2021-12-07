@@ -23,6 +23,7 @@ void showBacklog(vector<Inventory>);
 void showTopRated(vector<Inventory>);
 void searchPublisher(vector<Inventory>, string);
 void searchByDeveloper(vector<Inventory>, string);
+void addNewGame(vector<Inventory>, vector<string>, vector<string>, vector<string>);
 
 template<class S>
 double getTotalSizeNeeded(S inventory) {
@@ -60,62 +61,67 @@ int main() {
 	cout << "************************************************" << endl << endl;
 	cout << "Welcome to you 'NINDIE' game inventory manager!" << endl << endl;
 	choice = showMenu();
-	switch (choice) {
-	case 1:
-		showFullInventory(inventory);
-		break;
-	case 2:
-		showNamesOnly(inventory);
-		break;
-	case 3:
-		cout << "Please enter the name of the game you wnat to search for (case-sensitive):" << endl;
-		cin.ignore(50, '\n');
-		getline(cin, nameSearch);
-		foundNameLocation = searchName(inventory, nameSearch);
-		if (foundNameLocation > -1)
-			inventory[foundNameLocation].displayInv();
-		else
-			cout << "Game not found! Check your spelling or get on the eShop and buy it!" << endl;
-		break;
-	case 4:
-		cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
-		cin.ignore(50, '\n');
-		getline(cin, genreSearch);
-		searchGenres(inventory, genres1, genres2, genres3, genreSearch);
-		break;
-	case 5:
-		totalSize = getTotalSizeNeeded(inventory);
-		cout << "You will need about " << totalSize << " GBs of storage space to install all your games at once!" << endl;
-		break;
-	case 6:
-		totalValue = getTotalValue(inventory);
-		cout << "The total value of you full library of games is $" << setprecision(2) << fixed << totalValue << endl;
-		cout << "**SPOUSAL DISCLAIMER** Most of these games were purchased while on sale, love you! :)" << endl;
-		break;
-	case 7:
-		showBacklog(inventory);
-		break;
-	case 8:
-		showTopRated(inventory);
-		break;
-	case 9:
-		cout << "Please enter the publisher you would like to search for (case-sensitive):" << endl;
-		cin.ignore(50, '\n');
-		getline(cin, pubSearch);
-		searchPublisher(inventory, pubSearch);
-		break;
-	case 10:
-		cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
-		cin.ignore(50, '\n');
-		getline(cin, devSearch);
-		searchPublisher(inventory, devSearch);
-		break;
-	case 11:
-		break;
-	case 0:
-		return 0;
-	default:
-		break;
+	while (choice != 0) {
+		switch (choice) {
+		case 1:
+			showFullInventory(inventory);
+			break;
+		case 2:
+			showNamesOnly(inventory);
+			break;
+		case 3:
+			cout << "Please enter the name of the game you wnat to search for (case-sensitive):" << endl;
+			cin.ignore(50, '\n');
+			getline(cin, nameSearch);
+			foundNameLocation = searchName(inventory, nameSearch);
+			if (foundNameLocation > -1)
+				inventory[foundNameLocation].displayInv();
+			else
+				cout << "Game not found! Check your spelling or get on the eShop and buy it!" << endl;
+			break;
+		case 4:
+			cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
+			cin.ignore(50, '\n');
+			getline(cin, genreSearch);
+			searchGenres(inventory, genres1, genres2, genres3, genreSearch);
+			break;
+		case 5:
+			totalSize = getTotalSizeNeeded(inventory);
+			cout << "You will need about " << totalSize << " GBs of storage space to install all your games at once!" << endl;
+			break;
+		case 6:
+			totalValue = getTotalValue(inventory);
+			cout << "The total value of you full library of games is $" << setprecision(2) << fixed << totalValue << endl;
+			cout << "**SPOUSAL DISCLAIMER** Most of these games were purchased while on sale, love you! :)" << endl;
+			break;
+		case 7:
+			showBacklog(inventory);
+			break;
+		case 8:
+			showTopRated(inventory);
+			break;
+		case 9:
+			cout << "Please enter the publisher you would like to search for (case-sensitive):" << endl;
+			cin.ignore(50, '\n');
+			getline(cin, pubSearch);
+			searchPublisher(inventory, pubSearch);
+			break;
+		case 10:
+			cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
+			cin.ignore(50, '\n');
+			getline(cin, devSearch);
+			searchPublisher(inventory, devSearch);
+			break;
+		case 11:
+			addNewGame(inventory, genres1, genres2, genres3);
+			break;
+		case 0:
+			return 0;
+		default:
+			cout << "Invalid choice Entered! Try again.." << endl;
+			break;
+		}
+		choice = showMenu();
 	}
 	
 }
@@ -135,6 +141,7 @@ int showMenu() {
 	cout << "9. Search by publisher" << endl;
 	cout << "10. Search by developer" << endl;
 	cout << "11. Add a new game to your inventory" << endl;
+	cout << "12. Edit existing game information" << endl;
 	cout << "0. Exit the program" << endl;
 	cout << "Enter your choice now: ";
 	cin >> choice;
@@ -178,7 +185,7 @@ void getFullInventory(vector<Inventory> &inventory, vector<string> &genres1, vec
 }
 void showFullInventory(vector<Inventory> inventory) {
 	for (int i = 0; i < inventory.size(); i++) {
-		inventory[i].displayInv();
+		inventory.at(i).displayInv();
 	}
 	cout << "\n";
 }
@@ -254,6 +261,51 @@ void searchDeveloper(vector<Inventory> inventory, string devSearch) {
 	}
 	if (found != true)
 		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
+}
+void addNewGame(vector<Inventory> inventory, vector<string> genres1, vector<string> genres2, vector<string> genres3) {
+	Inventory tempSlot;
+	string name, pub, dev, genre1c, genre2c, genre3c, fullGenre;
+	string genre1[] = {"Action", "Strategy", "Turn - Based", "Simulation"};
+	string genre2[] = {" Adventure", " Platformer", " Arcade", " Deck-Builder", " Puzzle"};
+	string genre3[] = {" Roguelike", " Fighting", " RPG", " Platformer", " Survival", " Exploration", " Lifestyle"};
+	int genre1m, genre2m, genre3m;
+	double price, size, rating;
+	cout << "Name of the game you would like to add:" << endl;
+	cin.ignore(100, '\n');
+	getline(cin, name);
+	cout << "\nPrice of the game (not the sale price):" << endl;
+	cin >> price;
+	cout << "\nPublisher: ";
+	cin.ignore(100, '\n');
+	getline(cin, pub);
+	cout << "\nDeveloper: ";
+	cin.ignore(100, '\n');
+	getline(cin, dev);
+	cout << "1st genre category (of 3)" << endl;
+	cout << "Enter the number that corresponds with your choice" << endl;
+	cout << "1.Action |2. Strategy |3. Turn-Based |4. Simulation" << endl;
+	cin >> genre1m;
+	genre1c = genre1[genre1m];
+	cout << "2nd genre category (of 3)";
+	cout << "Enter the number that corresponds with your choice" << endl;
+	cout << "1.Adventure |2. Platformer |3. Arcade |4. Deck-Builder |5. Puzzle" << endl;
+	cin >> genre2m;
+	genre2c = genre2[genre2m];
+	cout << "3rd genre category: ";
+	cout << "1. Roguelike |2. Fighting |3. RPG |4. Platformer |5. Survival |6. Exploration |7. Lifestyle" << endl;
+	cin >> genre3m;
+	genre3c = genre3[genre3m];
+	fullGenre = genre1c.append(genre2c);
+	fullGenre.append(genre3c);
+	cout << "Size of the game: ";
+	cin >> size;
+	cout << "Personal rating out of 5 (use 0 if not played enough to rate): ";
+	cin >> rating;
+	tempSlot.setNewInvItem(name, price, pub, dev, fullGenre, size, rating);
+	inventory.push_back(tempSlot);
+	cout << "\nThis is what you entered:" << endl;
+	cout << "------------------------------------------" << endl;
+	tempSlot.displayNewGame();
 }
 
 

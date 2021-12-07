@@ -16,6 +16,14 @@ private:
 	string invPub;
 	string invDev;
 	string invGenre;
+	double newSize;
+	double newPrice;
+	double newRate;
+	string newName;
+	string newPub;
+	string newDev;
+	string newGenre;
+
 	
 
 public:
@@ -27,10 +35,19 @@ public:
 		invPub = "";
 		invDev = "";
 		invGenre = "";
+		newSize = 0;
+		newPrice = 0.0;
+		newRate = 0.0;
+		newName = "";
+		newPub = "";
+		newDev = "";
+		newGenre = "";
 	}
 	
 	void storeInvItem(string name, double price, string pub, string dev, string genre, double size, double rating);
+	void setNewInvItem(string name, double price, string pub, string dev, string genre, double size, double rating);
 	void displayInv();
+	void displayNewGame();
 	string getInvName();
 	string getInvGenre();
 	double getInvSize();
@@ -39,27 +56,6 @@ public:
 	string getInvPub();
 	string getInvDev();
 
-	void setInvSize(double size) {
-		invSize = size;
-	}
-	void setInvPrice(double price) {
-		invPrice = price;
-	}
-	void setInvRate(double rating) {
-		invRate = rating;
-	}
-	void setInvName(string name) {
-		invName = name;
-	}
-	void setInvPub(string publisher) {
-		invPub = publisher;
-	}
-	void setInvDev(string developer) {
-		invDev = developer;
-	}
-	void setInvCat(string genre) {
-		invGenre = genre;
-	}
 	void setInvAll(string name, double price, string publisher, string developer, string genre, double size, double rating) {
 		invName = name;
 		invPrice = price;
@@ -68,6 +64,15 @@ public:
 		invGenre = genre;
 		invSize = size;
 		invRate = rating;
+	}
+	void setAllNew(string name, double price, string publisher, string developer, string genre, double size, double rating) {
+		newName = name;
+		newPrice = price;
+		newPub = publisher;
+		newDev = developer;
+		newGenre = genre;
+		newSize = size;
+		newRate = rating;
 	}
 };
 

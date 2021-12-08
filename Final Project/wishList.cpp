@@ -3,7 +3,7 @@
 #include "wishList.h"
 using namespace std;
 
-void WishList::storeWLitem(string name, double price, string pub, string dev, string genre, double size, string available) {
+void Wishlist::storeWLitem(string name, double price, string pub, string dev, string genre, double size, string available) {
 	nameWL = name;
 	priceWL = price;
 	pubWL = pub;
@@ -12,7 +12,7 @@ void WishList::storeWLitem(string name, double price, string pub, string dev, st
 	sizeWL = size;
 	avail = available;
 }
-void WishList::displayWL() {
+void Wishlist::displayWL() {
 	cout << "*****************************************" << endl;
 	cout << "Name: " << nameWL << endl;
 	cout << "-----------------------------------------" << endl;
@@ -31,9 +31,9 @@ void WishList::displayWL() {
 		cout << "NO, this game releases on "<< avail << endl;
 		
 }
-string WishList::getWLitemName() {
+string Wishlist::getWLitemName() {
 	return nameWL;
 }
-double WishList::getWLitemPrice() {
+double Wishlist::getWLitemPrice() {
 	return priceWL;
 }

@@ -4,10 +4,10 @@
 #include <string>
 using namespace std;
 
-#ifndef WishList_h
-#define WishList_h
+#ifndef Wishlist_h
+#define Wishlist_h
 
-class WishList {
+class Wishlist {
 private:
 	string nameWL;
 	double priceWL;
@@ -18,7 +18,7 @@ private:
 	string avail;
 
 public:
-	WishList() {
+	Wishlist() {
 		nameWL = "";
 		priceWL = 0.0;
 		pubWL = "";

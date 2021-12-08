@@ -21,7 +21,7 @@
     <ClCompile Include="inventory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wishList.cpp">
+    <ClCompile Include="wishlist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="inventory.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="wishList.h">
+    <ClInclude Include="wishlist.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -141,10 +141,10 @@
   <ItemGroup>
     <ClCompile Include="inventory.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="wishList.cpp" />
+    <ClCompile Include="wishlist.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="wishList.h" />
+    <ClInclude Include="wishlist.h" />
     <ClInclude Include="inventory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

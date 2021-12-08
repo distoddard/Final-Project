@@ -3,6 +3,7 @@
 #include "inventory.h"
 using namespace std;
 
+
 void Inventory::storeInvItem(string name, double price, string pub, string dev, string genre, double size, double rating) {
 	invName = name;
 	invPrice = price;
@@ -11,7 +12,8 @@ void Inventory::storeInvItem(string name, double price, string pub, string dev, 
 	invGenre = genre;
 	invSize = size;
 	invRate = rating;
-}void Inventory::setNewInvItem(string name, double price, string pub, string dev, string genre, double size, double rating) {
+}
+void Inventory::setNewInvItem(string name, double price, string pub, string dev, string genre, double size, double rating) {
 	newName = name;
 	newPrice = price;
 	newPub = pub;

@@ -21,12 +21,15 @@
     <ClCompile Include="inventory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wishList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inventory.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="newGame.h">
+    <ClInclude Include="wishList.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

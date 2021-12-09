@@ -27,6 +27,7 @@ void searchPublisher(vector<Inventory>, string);
 void searchByDeveloper(vector<Inventory>, string);
 void addNewGame(vector<Inventory> &, vector<string> &, vector<string> &, vector<string> &);
 void writeInvToFiles(vector<Inventory>, vector<string>, vector<string>, vector<string>);
+void editInvItem(vector<Inventory>&, vector<string>&, vector<string>&, vector<string>&);
 void removeInvItem(vector<Inventory>&, vector<string>&, vector<string>&, vector<string>&);
 
 int wlMenu();
@@ -200,6 +201,7 @@ int main() {
 						addNewGame(inventory, genres1, genres2, genres3);
 						break;
 					case EDIT:
+						editInvItem(inventory, genres1, genres2, genres3);
 						break;
 					case REMOVE:
 						removeInvItem(inventory, genres1, genres2, genres3);
@@ -399,11 +401,7 @@ void searchDeveloper(vector<Inventory> inventory, string devSearch) {
 void addNewGame(vector<Inventory> &inventory, vector<string> &genres1, vector<string> &genres2, vector<string> &genres3) {
 	Inventory tempSlot, tempSlot2;
 	char error;
-	string name, pub, dev, genre1c, genre2c, genre3c, fullGenre;
-	string genre1[] = {"Action", "Strategy", "Turn - Based", "Simulation"};
-	string genre2[] = {"Adventure", "Platformer", "Arcade", "Deck-Builder", "Puzzle"};
-	string genre3[] = {"Roguelike", "Fighting", "RPG", "Platformer", "Survival", "Exploration", "Lifestyle"};
-	int genre1m, genre2m, genre3m;
+	string name, pub, dev, fullGenre;
 	double price, size, rating;
 	cout << "Name of the game you would like to add:" << endl;
 	cin.ignore(50, '\n');
@@ -415,35 +413,7 @@ void addNewGame(vector<Inventory> &inventory, vector<string> &genres1, vector<st
 	getline(cin, pub);
 	cout << "\nDeveloper:" << endl;
 	getline(cin, dev);
-	cout << "\nEnter the number that corresponds with your choice for each genre category" << endl;
-	cout << "1st genre category (of 3)" << endl;
-	cout << "1.Action |2. Strategy |3. Turn-Based |4. Simulation" << endl;
-	cin >> genre1m;
-	while (genre1m > 4 || genre1m < 1) {
-		cout << "Invalid number entered! Try again.." << endl;
-		cin >> genre1m;
-	}
-	genre1c = genre1[genre1m - 1];
-	genres1.push_back(genre1c);
-	cout << "\n2nd genre category (of 3)" << endl;
-	cout << "1.Adventure |2. Platformer |3. Arcade |4. Deck-Builder |5. Puzzle" << endl;
-	cin >> genre2m;
-	while (genre2m > 5 || genre2m < 1) {
-		cout << "Invalid number entered! Try again.." << endl;
-		cin >> genre2m;
-	}
-	genre2c = genre2[genre2m - 1];
-	genres2.push_back(genre2c);
-	cout << "\n3rd genre category (last)" << endl;
-	cout << "1. Roguelike |2. Fighting |3. RPG |4. Platformer |5. Survival |6. Exploration |7. Lifestyle" << endl;
-	cin >> genre3m;
-	while (genre3m > 7 || genre3m < 1) {
-		cout << "Invalid number entered! Try again.." << endl;
-		cin >> genre3m;
-	}
-	genre3c = genre3[genre3m - 1];
-	genres3.push_back(genre3c);
-	fullGenre = genre1c + " " + genre2c + " " + genre3c;
+	fullGenre = genreSelection(genres1, genres2, genres3);
 	cout << "\nSize of the game:" << endl;
 	cin >> size;
 	cout << "\nPersonal rating out of 5 (use 0 if not played enough to rate):" << endl;
@@ -489,6 +459,62 @@ void writeInvToFiles(vector<Inventory> inventory, vector<string> genres1, vector
 
 	writeNames.close(); writePrices.close(); writePubs.close(); writeDevs.close(); writeGenre1.close();
 	writeGenre2.close(); writeGenre3.close(); writeSizes.close(); writeRatings.close();
+}
+void editInvItem(vector<Inventory>& inventory, vector<string>& genres1, vector<string>& genres2, vector<string>& genres3) {
+	Inventory tempSlot;
+	string search, name, pub, dev, fullGenre;
+	double price, size, rating;
+	int found;
+	char yn;
+	do {
+		cout << "Enter the name of the game you would like to edit the information for:" << endl;
+		cin.ignore(100, '\n');
+		getline(cin, search);
+		found = searchName(inventory, search);
+		if (found > -1) {
+			cout << "FOUND:" << endl;
+			inventory[found].displayInv();
+			do {
+				cout << "\nEnter the new information for this game:" << endl;
+				cout << "Name: ";
+				getline(cin, name);
+				cout << "Price: ";
+				cin >> price;
+				cout << "Publisher: ";
+				cin.ignore(50, '\n');
+				getline(cin, pub);
+				cout << "Developer: ";
+				getline(cin, dev);
+				fullGenre = genreEdit(genres1, genres2, genres3, found);
+				cout << "\nSize of the game:" << endl;
+				cin >> size;
+				cout << "\nPersonal rating out of 5 (use 0 if not played enough to rate):" << endl;
+				cin >> rating;
+				tempSlot.storeInvItem(name, price, pub, dev, fullGenre, size, rating);
+				cout << "\nIs everything correct?" << endl;
+				tempSlot.displayInv();
+				cout << "\nY/N : ";
+				cin >> yn;
+				toupper(yn);
+				while (yn != 'Y' || yn != 'N') {
+					cout << "Inavild input! Enter 'Y' or 'N' only!" << endl;
+					cin >> yn;
+					toupper(yn);
+				}
+				if (yn == 'Y')
+					inventory[found] = tempSlot;
+				else
+					cout << "Starting over.." << endl << endl;
+			} while (yn == 'N');
+			cout << "The new information is now stored!" << endl << endl;
+		}
+		else {
+			cout << "The game you are trying to edit could not be found.." << endl;
+			cout << "Would you like to try again? (Y/N):";
+			cin >> yn;
+		}
+	} while (yn == 'Y');
+
 }
 void removeInvItem(vector<Inventory> &inventory, vector<string>& genres1, vector<string>& genres2, vector<string>& genres3) {
 	int x = 0;
@@ -571,4 +597,84 @@ void showWishlistNames(vector<Wishlist> wishlist) {
 }
 void searchWishlist(vector<Wishlist> wishlist) {
 
+}
+
+
+string genreSelection(vector<string> &genres1, vector<string> &genres2, vector<string> &genres3) {
+	string genre1c, genre2c, genre3c, fullGenre;
+	string genre1[] = { "Action", "Strategy", "Turn - Based", "Simulation" };
+	string genre2[] = { "Adventure", "Platformer", "Arcade", "Deck-Builder", "Puzzle" };
+	string genre3[] = { "Roguelike", "Fighting", "RPG", "Platformer", "Survival", "Exploration", "Lifestyle" };
+	int genre1m, genre2m, genre3m;
+	cout << "\nEnter the number that corresponds with your choice for each genre category" << endl;
+	cout << "1st genre category (of 3)" << endl;
+	cout << "1.Action |2. Strategy |3. Turn-Based |4. Simulation" << endl;
+	cin >> genre1m;
+	while (genre1m > 4 || genre1m < 1) {
+		cout << "Invalid number entered! Try again.." << endl;
+		cin >> genre1m;
+	}
+	genre1c = genre1[genre1m - 1];
+	cout << "\n2nd genre category (of 3)" << endl;
+	cout << "1.Adventure |2. Platformer |3. Arcade |4. Deck-Builder |5. Puzzle" << endl;
+	cin >> genre2m;
+	while (genre2m > 5 || genre2m < 1) {
+		cout << "Invalid number entered! Try again.." << endl;
+		cin >> genre2m;
+	}
+	genre2c = genre2[genre2m - 1];
+	cout << "\n3rd genre category (last)" << endl;
+	cout << "1. Roguelike |2. Fighting |3. RPG |4. Platformer |5. Survival |6. Exploration |7. Lifestyle" << endl;
+	cin >> genre3m;
+	while (genre3m > 7 || genre3m < 1) {
+		cout << "Invalid number entered! Try again.." << endl;
+		cin >> genre3m;
+	}
+	genre3c = genre3[genre3m - 1];
+	fullGenre = genre1c + " " + genre2c + " " + genre3c;
+
+	genres1.push_back(genre1c);
+	genres2.push_back(genre2c);
+	genres3.push_back(genre3c);
+
+	return fullGenre;
+}
+string genreEdit(vector<string>& genres1, vector<string>& genres2, vector<string>& genres3, int location) {
+	string genre1c, genre2c, genre3c, fullGenre;
+	string genre1[] = { "Action", "Strategy", "Turn - Based", "Simulation" };
+	string genre2[] = { "Adventure", "Platformer", "Arcade", "Deck-Builder", "Puzzle" };
+	string genre3[] = { "Roguelike", "Fighting", "RPG", "Platformer", "Survival", "Exploration", "Lifestyle" };
+	int genre1m, genre2m, genre3m;
+	cout << "\nEnter the number that corresponds with your choice for each genre category" << endl;
+	cout << "1st genre category (of 3)" << endl;
+	cout << "1.Action |2. Strategy |3. Turn-Based |4. Simulation" << endl;
+	cin >> genre1m;
+	while (genre1m > 4 || genre1m < 1) {
+		cout << "Invalid number entered! Try again.." << endl;
+		cin >> genre1m;
+	}
+	genre1c = genre1[genre1m - 1];
+	cout << "\n2nd genre category (of 3)" << endl;
+	cout << "1.Adventure |2. Platformer |3. Arcade |4. Deck-Builder |5. Puzzle" << endl;
+	cin >> genre2m;
+	while (genre2m > 5 || genre2m < 1) {
+		cout << "Invalid number entered! Try again.." << endl;
+		cin >> genre2m;
+	}
+	genre2c = genre2[genre2m - 1];
+	cout << "\n3rd genre category (last)" << endl;
+	cout << "1. Roguelike |2. Fighting |3. RPG |4. Platformer |5. Survival |6. Exploration |7. Lifestyle" << endl;
+	cin >> genre3m;
+	while (genre3m > 7 || genre3m < 1) {
+		cout << "Invalid number entered! Try again.." << endl;
+		cin >> genre3m;
+	}
+	genre3c = genre3[genre3m - 1];
+	fullGenre = genre1c + " " + genre2c + " " + genre3c;
+
+	genres1[location] = genre1c;
+	genres2[location] = genre2c;
+	genres3[location] = genre3c;
+
+	return fullGenre;
 }

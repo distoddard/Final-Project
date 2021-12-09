@@ -31,9 +31,24 @@ void Wishlist::displayWL() {
 		cout << "NO, this game releases on "<< avail << endl;
 		
 }
-string Wishlist::getWLitemName() {
+string Wishlist::getWLName() {
 	return nameWL;
 }
-double Wishlist::getWLitemPrice() {
+double Wishlist::getWLPrice() {
 	return priceWL;
+}
+string Wishlist::getWLPub() {
+	return pubWL;
+}
+string Wishlist::getWLDev() {
+	return devWL;
+}
+string Wishlist::getWLGenre() {
+	return genreWL;
+}
+double Wishlist::getWLSize() {
+	return sizeWL;
+}
+string Wishlist::getWLAvail() {
+	return avail;
 }

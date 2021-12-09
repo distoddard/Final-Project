@@ -30,8 +30,13 @@ public:
 
 	void storeWLitem(string name, double price, string pub, string dev, string genre, double size, string available);
 	void displayWL();
-	string getWLitemName();
-	double getWLitemPrice();
+	string getWLName();
+	double getWLPrice();
+	string getWLPub();
+	string getWLDev();
+	string getWLGenre();
+	double getWLSize();
+	string getWLAvail();
 };
 
 

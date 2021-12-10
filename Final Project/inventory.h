@@ -16,6 +16,9 @@ private:
 	string invPub;
 	string invDev;
 	string invGenre;
+	string invGenre2;
+	string invGenre3;
+	string invFullG;
 	double newSize;
 	double newPrice;
 	double newRate;
@@ -23,6 +26,9 @@ private:
 	string newPub;
 	string newDev;
 	string newGenre;
+	string newGenre2;
+	string newGenre3;
+	string newFullG;
 
 	
 
@@ -35,6 +41,9 @@ public:
 		invPub = "";
 		invDev = "";
 		invGenre = "";
+		invGenre2 = "";
+		invGenre3 = "";
+		invFullG = "";
 		newSize = 0;
 		newPrice = 0.0;
 		newRate = 0.0;
@@ -42,38 +51,27 @@ public:
 		newPub = "";
 		newDev = "";
 		newGenre = "";
+		newGenre2 = "";
+		newGenre3 = "";
+		newFullG = "";
 	}
 	
-	void storeInvItem(string name, double price, string pub, string dev, string genre, double size, double rating);
-	void setNewInvItem(string name, double price, string pub, string dev, string genre, double size, double rating);
+	void storeInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating);
+	void setNewInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating);
 	void displayInv();
 	void displayNewGame();
 	string getInvName();
 	string getInvGenre();
+	string getInvGenre2();
+	string getInvGenre3();
+	string getFullG();
 	double getInvSize();
 	double getInvPrice();
 	double getInvRate();
 	string getInvPub();
 	string getInvDev();
 
-	void setInvAll(string name, double price, string publisher, string developer, string genre, double size, double rating) {
-		invName = name;
-		invPrice = price;
-		invPub = publisher;
-		invDev = developer;
-		invGenre = genre;
-		invSize = size;
-		invRate = rating;
-	}
-	void setAllNew(string name, double price, string publisher, string developer, string genre, double size, double rating) {
-		newName = name;
-		newPrice = price;
-		newPub = publisher;
-		newDev = developer;
-		newGenre = genre;
-		newSize = size;
-		newRate = rating;
-	}
+	
 };
 
 #endif // !Inventory_h

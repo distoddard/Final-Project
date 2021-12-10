@@ -18,5 +18,4 @@ Strategy
 Action
 Action
 Action
-Strategy
 Action

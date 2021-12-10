@@ -19,4 +19,3 @@ Arcade
 RPG
 Platformer
 Roguelike
-Roguelike

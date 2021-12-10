@@ -18,5 +18,4 @@ Puzzle
 Platformer
 Adventure
 Adventure
-Adventure
 Puzzle

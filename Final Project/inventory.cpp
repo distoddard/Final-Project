@@ -4,21 +4,27 @@
 using namespace std;
 
 
-void Inventory::storeInvItem(string name, double price, string pub, string dev, string genre, double size, double rating) {
+void Inventory::storeInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating) {
 	invName = name;
 	invPrice = price;
 	invPub = pub;
 	invDev = dev;
-	invGenre = genre;
+	invGenre = genre1;
+	invGenre2 = genre2;
+	invGenre3 = genre3;
+	invFullG = fullG;
 	invSize = size;
 	invRate = rating;
 }
-void Inventory::setNewInvItem(string name, double price, string pub, string dev, string genre, double size, double rating) {
+void Inventory::setNewInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating) {
 	newName = name;
 	newPrice = price;
 	newPub = pub;
 	newDev = dev;
-	newGenre = genre;
+	newGenre = genre1;
+	newGenre2 = genre2;
+	newGenre3 = genre3;
+	newFullG = fullG;
 	newSize = size;
 	newRate = rating;
 }
@@ -30,7 +36,7 @@ void Inventory::displayInv() {
 	cout << "Price: $" << fixed << setprecision(2) << invPrice << endl;
 	cout << "Publisher: " << invPub << endl;
 	cout << "Developer: " << invDev << endl;
-	cout << "Genre: " << invGenre << endl;
+	cout << "Genre: " << invFullG << endl;
 	if (invSize > 32)
 		cout << "Size: " << invSize << " MB" << endl;
 	else
@@ -56,6 +62,15 @@ string Inventory::getInvName() {
 }
 string Inventory::getInvGenre() {
 	return invGenre;
+}
+string Inventory::getInvGenre2() {
+	return invGenre2;
+}
+string Inventory::getInvGenre3() {
+	return invGenre3;
+}
+string Inventory::getFullG() {
+	return invFullG;
 }
 string Inventory::getInvPub() {
 	return invPub;

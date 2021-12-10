@@ -24,7 +24,7 @@ void searchGenres(vector<Inventory>, vector<string>, vector<string>, vector<stri
 void showBacklog(vector<Inventory>);
 void showTopRated(vector<Inventory>);
 void searchPublisher(vector<Inventory>, string);
-void searchByDeveloper(vector<Inventory>, string);
+void searchDeveloper(vector<Inventory>, string);
 void addNewGame(vector<Inventory> &, vector<string> &, vector<string> &, vector<string> &);
 void writeInvToFiles(vector<Inventory>, vector<string>, vector<string>, vector<string>);
 void editInvItem(vector<Inventory>&, vector<string>&, vector<string>&, vector<string>&);
@@ -35,9 +35,15 @@ int wlMenu();
 void getFullWishlist(vector<Wishlist>&, vector <string>&, vector<string>&, vector<string>&);
 void showFullWishlist(vector<Wishlist>);
 void showWishlistNames(vector<Wishlist>);
-void searchWishlist();
-void addWLitem(vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&);
+int searchWLNames(vector<Wishlist>, string);
+void searchWLPub(vector<Wishlist>, string);
+void searchWLDev(vector<Wishlist>, string);
+void searchWLGenres(vector<Wishlist>, vector<string>, vector<string>, vector<string>, string);
+void showUpcomingGames(vector<Wishlist>);
+void addGameToWL(vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&);
+void removeWLitem(vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&);
 void moveToInv(vector<Inventory>&, vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&, vector<string>&, vector<string>&, vector<string>&);
+void writeWLToFiles(vector<Wishlist>, vector<string>, vector<string>, vector<string>);
 
 string genre1select();
 string genre2select();
@@ -96,7 +102,7 @@ int main() {
 	Menu menuEnum;
 	Search searchEnum;
 	Manage manageEnum;
-	int totalNumGames = 0, choice = 0, mainChoice = 0, searchChoice = 0, manageChoice = 0, foundNameLocation;
+	int totalNumGames = 0, choice = 0, mainChoice = 0, searchChoice = 0, manageChoice = 0, foundNameLoc;
 	double totalSize, totalValue;
 	string nameSearch, genreSearch, pubSearch, devSearch;
 	vector<Inventory> inventory;
@@ -104,7 +110,7 @@ int main() {
 	vector<string> genres1; vector<string> genres2; vector<string> genres3;
 	vector<string> genresW1; vector<string> genresW2; vector<string> genresW3;
 	getFullInventory(inventory, genres1, genres2, genres3);
-	
+	getFullWishlist(wishlist, genresW1, genresW2, genresW3);
 
 	cout << "***********************************************************" << endl;
 	cout << "* NINTENDO SWITCH INDIE GAME INVENTORY & WISHLIST MANAGER *" << endl;
@@ -145,9 +151,9 @@ int main() {
 						cout << "Please enter the name of the game you want to search for (case-sensitive):" << endl;
 						cin.ignore(50, '\n');
 						getline(cin, nameSearch);
-						foundNameLocation = searchName(inventory, nameSearch);
-						if (foundNameLocation > -1)
-							inventory[foundNameLocation].displayInv();
+						foundNameLoc = searchName(inventory, nameSearch);
+						if (foundNameLoc > -1)
+							inventory[foundNameLoc].displayInv();
 						else
 							cout << "Game not found! Check your spelling or get on the eShop and buy it!" << endl;
 						break;
@@ -255,9 +261,9 @@ int main() {
 						cout << "Please enter the name of the game you want to search for (case-sensitive):" << endl;
 						cin.ignore(50, '\n');
 						getline(cin, nameSearch);
-						foundNameLocation = searchWLNames(wishlist, nameSearch);
-						if (foundNameLocation > -1)
-							wishlist[foundNameLocation].displayWL();
+						foundNameLoc = searchWLNames(wishlist, nameSearch);
+						if (foundNameLoc > -1)
+							wishlist[foundNameLoc].displayWL();
 						else
 							cout << "Game not found! Check your spelling or get on the eShop and buy it!" << endl;
 						break;
@@ -313,7 +319,7 @@ int main() {
 int mainMenu() {
 	int choice;
 	cout << "Which library would you like to manage?" << endl;
-	cout << "Enter '1' for INVENTORY | '2' for WISHLIST | '3' to EXIT: ";
+	cout << "Enter '1' for INVENTORY | '2' for WISHLIST | '0' to EXIT: ";
 	cin >> choice;
 	while (choice < 0 || choice > 2) {
 		cout << "Invalid option enetered..." << endl;
@@ -380,6 +386,7 @@ void getFullInventory(vector<Inventory> &inventory, vector<string> &genres1, vec
 void showFullInventory(vector<Inventory> inventory) {
 	for (int i = 0; i < inventory.size(); i++) {
 		inventory.at(i).displayInv();
+		cout << "\n";
 	}
 	cout << "\n";
 }
@@ -694,7 +701,7 @@ void searchWLDev(vector<Wishlist> wishlist, string devSearch) {
 	cout << "----------------------------------------------------------------------------" << endl;
 	for (int i = 0; i < wishlist.size(); i++) {
 		if (wishlist[i].getWLDev() == devSearch) {
-			cout << setw(40) << right << wishlist[i].getWLName() << " - " << setw(40) << left << wishlist[i].getDevPub() << endl;
+			cout << setw(40) << right << wishlist[i].getWLName() << " - " << setw(40) << left << wishlist[i].getWLDev() << endl;
 			found = true;
 		}
 	}

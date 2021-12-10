@@ -25,10 +25,10 @@ void Wishlist::displayWL() {
 	else
 		cout << "Size: " << sizeWL << " GB" << endl;
 	cout << "Avaialble now?? ";
-	if (avail == "Y")
+	if (avail == "YES")
 		cout << "YES" << endl;
 	else 
-		cout << "NO, this game releases on "<< avail << endl;
+		cout << "NO, this game releases on "<< avail << endl << endl;
 		
 }
 string Wishlist::getWLName() {

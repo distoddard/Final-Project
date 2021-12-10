@@ -56,8 +56,7 @@ public:
 		newFullG = "";
 	}
 	
-	void storeInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating);
-	void setNewInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating);
+	void setInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating);
 	void displayInv();
 	void displayNewGame();
 	string getInvName();

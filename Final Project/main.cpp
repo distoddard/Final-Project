@@ -1,8 +1,10 @@
 //Daniel Stoddard
 //CIS 1202 - 800
 //December 2, 2021
-//Nintendo Switch Indie Game Inventory Manager
-//description goes here
+//Nintendo Switch Indie Game Inventory & Wishlist Manager
+// 
+//This program pulls information from txt & dat files, stores it in vectors, and allows the user to view, search and edit that information.  
+//All changes are saved back to the files and can be accessed in future runs of the program without editing the files outside of the program.
 
 #include <iostream>
 #include <iomanip>
@@ -363,7 +365,7 @@ void getFullInventory(vector<Inventory> &inventory) {//function to read the inve
 		fullG = fullGenreMaker(genre1, genre2, genre3);//combines the 3 genres into 1 for ease of displaying later
 		readSizes >> size;
 		readRatings >> rating;
-		tempSlot.storeInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);//stores the read info in an Inventory variable
+		tempSlot.setInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);//stores the read info in an Inventory variable
 		inventory.push_back(tempSlot);//puts the info in the inventory vector
 	}
 	readNames.close(); readPrices.close(); readPubs.close(); readDevs.close();
@@ -483,7 +485,7 @@ void addNewGame(vector<Inventory> &inventory) {//adds a new game to the inventor
 	cin >> size;
 	cout << "\nPersonal rating out of 5 (use 0 if not played enough to rate):" << endl;
 	cin >> rating;
-	tempSlot.setNewInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);
+	tempSlot.setInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);
 	cout << "\nThis is what you entered:" << endl;
 	cout << "------------------------------------------" << endl;
 	tempSlot.displayNewGame();
@@ -554,7 +556,7 @@ void editInvItem(vector<Inventory>& inventory) {//edits the information of a sig
 				cin >> size;
 				cout << "\nPersonal rating out of 5 (use 0 if not played enough to rate):" << endl;
 				cin >> rating;
-				tempSlot.storeInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);
+				tempSlot.setInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);
 				cout << "\nIs everything correct?" << endl;
 				tempSlot.displayInv();
 				cout << "\nY/N : ";
@@ -823,7 +825,7 @@ void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist) {//move
 		genre3 = wishlist[found].getWLGenre3();
 		fullG = fullGenreMaker(genre1, genre2, genre3);
 		size = wishlist[found].getWLSize();
-		tempInvSlot.storeInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);
+		tempInvSlot.setInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);
 		inventory.push_back(tempInvSlot);
 		cout << "The game has been added to your inventory.." << endl;
 		wishlist.erase(wishlist.begin() + found);

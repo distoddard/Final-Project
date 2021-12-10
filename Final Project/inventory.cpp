@@ -4,7 +4,7 @@
 using namespace std;
 
 
-void Inventory::storeInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating) {
+void Inventory::setInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating) {
 	invName = name;
 	invPrice = price;
 	invPub = pub;
@@ -16,19 +16,6 @@ void Inventory::storeInvItem(string name, double price, string pub, string dev, 
 	invSize = size;
 	invRate = rating;
 }
-void Inventory::setNewInvItem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, double rating) {
-	newName = name;
-	newPrice = price;
-	newPub = pub;
-	newDev = dev;
-	newGenre = genre1;
-	newGenre2 = genre2;
-	newGenre3 = genre3;
-	newFullG = fullG;
-	newSize = size;
-	newRate = rating;
-}
-
 void Inventory::displayInv() {
 	cout << "*****************************************" << endl;
 	cout << "Name: " << invName << endl;
@@ -49,7 +36,7 @@ void Inventory::displayNewGame() {
 	cout << "Price: $" << newPrice << endl;
 	cout << "Publisher: " << newPub << endl;
 	cout << "Developer: " << newDev << endl;
-	cout << "Genre: " << newGenre << endl;
+	cout << "Genre: " << newFullG << endl;
 	if (newSize > 32)
 		cout << "Size: " << newSize << " MB" << endl;
 	else

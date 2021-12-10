@@ -28,23 +28,23 @@ void searchDeveloper(vector<Inventory>, string);
 void addNewGame(vector<Inventory> &);
 void writeInvToFiles(vector<Inventory>);
 void editInvItem(vector<Inventory>&);
-void removeInvItem(vector<Inventory>&);
+void removeInvItem(vector<Inventory>&, string);
 
 //wishlist prototypes
 int wlMenu();
-void getFullWishlist(vector<Wishlist>&, vector <string>&, vector<string>&, vector<string>&);
+void getFullWishlist(vector<Wishlist>&);
 void showFullWishlist(vector<Wishlist>);
 void showWishlistNames(vector<Wishlist>);
 int searchWLNames(vector<Wishlist>, string);
 void searchWLPub(vector<Wishlist>, string);
 void searchWLDev(vector<Wishlist>, string);
-void searchWLGenres(vector<Wishlist>, vector<string>, vector<string>, vector<string>, string);
+void searchWLGenres(vector<Wishlist>, string);
 void showUpcomingGames(vector<Wishlist>);
-void addGameToWL(vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&);
-void editWLitem(vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&);
-void removeWLitem(vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&);
-void moveToInv(vector<Inventory>&, vector<Wishlist>&, vector<string>&, vector<string>&, vector<string>&, vector<string>&, vector<string>&, vector<string>&);
-void writeWLToFiles(vector<Wishlist>, vector<string>, vector<string>, vector<string>);
+void addGameToWL(vector<Wishlist>&);
+void editWLitem(vector<Wishlist>&);
+void removeWLitem(vector<Wishlist>&);
+void moveToInv(vector<Inventory>&, vector<Wishlist>&);
+void writeWLToFiles(vector<Wishlist>);
 
 //used for both prototypes
 string genre1select();
@@ -52,24 +52,23 @@ string genre2select();
 string genre3select();
 string fullGenreMaker(string, string, string);
 //enumerators for menu options
-enum Menu {
+enum Menu {//main menu
 	EXIT,
 	INVENTORY,
 	WISHLIST
 };
-enum Search {
+enum Search {//search menu
 	RETURN,
 	NAME,
 	PUB,
 	DEV,
 	GENRE
 };
-enum Manage {
+enum Manage {//single game management menu
 	CANCEL,
 	ADD,
 	EDIT,
-	REMOVE,
-	MOVE
+	REMOVE
 };
 //templates for calculating values
 template<class S>
@@ -101,13 +100,12 @@ int main()
 	int totalNumGames = 0, choice = 0, mainChoice = 0, searchChoice = 0, manageChoice = 0, foundNameLoc;
 	double totalSize, totalValue;
 	string nameSearch, genreSearch, pubSearch, devSearch;
+	char yn;
 	vector<Inventory> inventory;
 	vector<Wishlist> wishlist;
-	vector<string> genres1; vector<string> genres2; vector<string> genres3;
-	vector<string> genresW1; vector<string> genresW2; vector<string> genresW3;
-	//retrieves the data from the files 
-	getFullInventory(inventory, genres1, genres2, genres3);
-	getFullWishlist(wishlist, genresW1, genresW2, genresW3);
+	//retrieves the data from the files and stores in vectors
+	getFullInventory(inventory);
+	getFullWishlist(wishlist);
 	//intro display on startup
 	cout << "***********************************************************" << endl;
 	cout << "* NINTENDO SWITCH INDIE GAME INVENTORY & WISHLIST MANAGER *" << endl;
@@ -134,13 +132,7 @@ int main()
 					showNamesOnly(inventory);
 					break;
 				case 3://search options
-					cout << "What would you like to search by?" << endl;
-					cout << "1. NAME	|2.	PUBLISHER |3. DEVELOPER |4. GENRE	|0. CANCEL SEARCH" << endl;
-					cin >> searchChoice;
-					while (searchChoice < 0 || searchChoice > 4) {
-						cout << "Please enter a valid choice (1 - 4): " << endl;
-						cin >> searchChoice;
-					}
+					searchChoice = searchMenu();
 					searchEnum = static_cast<Search>(searchChoice);
 					switch (searchEnum)//switch for search options menu
 					{
@@ -155,22 +147,13 @@ int main()
 							cout << "Game not found! Check your spelling or get on the eShop and buy it!" << endl;
 						break;
 					case PUB://searching by publisher
-						cout << "Please enter the publisher you would like to search for (case-sensitive):" << endl;
-						cin.ignore(50, '\n');
-						getline(cin, pubSearch);
-						searchPublisher(inventory, pubSearch);
+						searchPublisher(inventory);
 						break;
 					case DEV://searching by developer
-						cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
-						cin.ignore(50, '\n');
-						getline(cin, devSearch);
-						searchDeveloper(inventory, devSearch);
+						searchDeveloper(inventory);
 						break;
 					case GENRE://searching by genre
-						cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
-						cin.ignore(50, '\n');
-						getline(cin, genreSearch);
-						searchGenres(inventory, genreSearch);
+						searchGenres(inventory);
 						break;
 					case RETURN://send user back to previous menu
 						cout << "Returning to previous menu.." << endl << endl;
@@ -186,7 +169,7 @@ int main()
 				case 5://calculate total value of all the owned games
 					totalValue = getTotalValue(inventory);
 					cout << "The total value of you full library of games is $" << setprecision(2) << fixed << totalValue << endl;
-					cout << "**SPOUSAL DISCLAIMER** Most of these games were purchased while on sale, love you! :)" << endl;
+					cout << "**SPOUSAL DISCLAIMER** 90% of these games were purchased while on sale, love you! :)" << endl;
 					break;
 				case 6://shows games with a '0' rating (games in the 'backlog')
 					showBacklog(inventory);
@@ -195,13 +178,7 @@ int main()
 					showTopRated(inventory);
 					break;
 				case 8://manage a single entry
-					cout << "What would you like to do?" << endl;
-					cout << "1. ADD		|2. EDIT	|3. REMOVE	|0. CANCEL " << endl;
-					cin >> manageChoice;
-					while (manageChoice > 3 || manageChoice < 0) {
-						cout << "Please enter a valid choice (0 - 3): ";
-						cin >> manageChoice;
-					}
+					manageChoice = manageMenu();
 					manageEnum = static_cast<Manage>(manageChoice);
 					switch (manageEnum)//switch for game management menu
 					{
@@ -219,8 +196,6 @@ int main()
 						cin.ignore(100, '\n');
 						getline(cin, nameSearch);
 						removeInvItem(inventory, nameSearch);
-						break;
-					case MOVE://unused here
 						break;
 					default:
 						break;
@@ -247,13 +222,7 @@ int main()
 					showWishlistNames(wishlist);
 					break;
 				case 3://search options menu
-					cout << "What would you like to search by?" << endl;
-					cout << "1. NAME	|2.	PUBLISHER |3. DEVELOPER |4. GENRE	|0. CANCEL SEARCH" << endl;
-					cin >> searchChoice;
-					while (searchChoice < 0 || searchChoice > 4) {
-						cout << "Please enter a valid choice (1 - 4): " << endl;
-						cin >> searchChoice;
-					}
+					searchChoice = searchMenu();
 					searchEnum = static_cast<Search>(searchChoice);
 					switch (searchEnum)//switch for the search options
 					{
@@ -283,7 +252,7 @@ int main()
 						cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
 						cin.ignore(50, '\n');
 						getline(cin, genreSearch);
-						searchWLGenres(wishlist, genresW1, genresW2, genresW3, genreSearch);
+						searchWLGenres(wishlist, genreSearch);
 						break;
 					case RETURN://send user to previous menu
 						cout << "Returning to previous menu.." << endl << endl;
@@ -296,13 +265,7 @@ int main()
 					showUpcomingGames(wishlist);
 					break;
 				case 5://manage a single entry
-					cout << "What would you like to do?" << endl;
-					cout << "1. ADD		|2. EDIT	|3. REMOVE	|4. MOVE TO INV.  |0. CANCEL " << endl;
-					cin >> manageChoice;
-					while (manageChoice > 3 || manageChoice < 0) {
-						cout << "Please enter a valid choice (0 - 3): ";
-						cin >> manageChoice;
-					}
+					manageChoice = manageMenu();
 					manageEnum = static_cast<Manage>(manageChoice);
 					switch (manageEnum)//switch for game management menu
 					{
@@ -310,16 +273,18 @@ int main()
 						cout << "Returning to previous menu.." << endl << endl;
 						break;
 					case ADD://add a new game
-						addGameToWL(wishlist, genresW1, genresW2, genresW3);
+						addGameToWL(wishlist);
 						break;
 					case EDIT://edit a game's info
-						editWLitem(wishlist, genresW1, genresW2, genresW3);
+						editWLitem(wishlist);
 						break;
-					case REMOVE://delete a game
-						removeWLitem(wishlist, genresW1, genresW2, genresW3);
-						break;
-					case MOVE://move a game form the WL to INV
-						moveToInv(inventory, wishlist, genres1, genres2, genres3, genresW1, genresW2, genresW3);
+					case REMOVE://delete a game or move it to the inventory
+						cout << "Would you like to move the game to your inventory? (Y/N)" << endl;
+						yn = yesNo(yn);//validates the input char and returns an uppercase 'Y' or 'N'
+						if (yn == 'Y')
+							moveToInv(inventory, wishlist);//move the game from the wishlist to the inventory
+						else
+							removeWLitem(wishlist);//delete the entry form the wishlist
 						break;
 					default:
 						break;
@@ -341,13 +306,7 @@ int mainMenu() {//main menu for choosing inventory or wishlist
 	int choice;
 	cout << "Which library would you like to manage?" << endl;
 	cout << "Enter '1' for INVENTORY | '2' for WISHLIST | '0' to EXIT: ";
-	cin >> choice;
-	while (choice < 0 || choice > 2) {
-		cout << "Invalid option enetered..." << endl;
-		cout << "(better have been a fat finger because it's pretty simple...)" << endl;
-		cout << "Enter '1' for INVENTORY or '2' for WISHLIST | '3' to EXIT: ";
-		cin >> choice;
-	}
+	choice = validate(0, 2);
 	return choice;
 }
 int invMenu() {//inventory menu
@@ -366,16 +325,25 @@ int invMenu() {//inventory menu
 	cout << "7. Show the top rated games only" << endl;
 	cout << "8. Manage a single entry in your inventory" << endl;
 	cout << "Enter your choice now: ";
-	cin >> choice;
-	while (choice > 8 || choice < 0) {
-		cout << "Please enter a valid choice (0 - 8): ";
-		cin >> choice;
-	}
+	choice = validate(0, 8);
 	cout << "\n";
 	return choice;
 }
-void getFullInventory(vector<Inventory> &inventory) {
-//function to read the inventory files and store the info in a vector of Inventory class objects	
+int searchMenu() {//function for the search menu
+	int choice = 0;
+	cout << "What would you like to search by?" << endl;
+	cout << "1. NAME	|2.	PUBLISHER |3. DEVELOPER |4. GENRE	|0. CANCEL SEARCH" << endl;
+	choice = validate(0, 4);
+	return choice;
+}
+int manageMenu() {//item management menu
+	int choice = 0;
+	cout << "What would you like to do?" << endl;
+	cout << "1. ADD		|2. EDIT	|3. REMOVE	|0. CANCEL " << endl;
+	choice = validate(0, 3);
+	return choice;
+}
+void getFullInventory(vector<Inventory> &inventory) {//function to read the inventory files and store the info in a vector of Inventory class objects	
 	double price, size, rating;
 	string name, pub, dev, genre1, genre2, genre3, fullG;
 	fstream readNames, readPrices, readPubs, readDevs, readGenre1, readGenre2, readGenre3, readSizes, readRatings;
@@ -401,19 +369,19 @@ void getFullInventory(vector<Inventory> &inventory) {
 	readNames.close(); readPrices.close(); readPubs.close(); readDevs.close();
 	readGenre1.close(); readGenre2.close(); readGenre3.close(); readSizes.close(); readRatings.close();
 }
-void showFullInventory(vector<Inventory> inventory) {
+void showFullInventory(vector<Inventory> inventory) {//shows the full ionventory
 	for (int i = 0; i < inventory.size(); i++) {
 		inventory.at(i).displayInv();
 	}
 	cout << "\n";
 }
-void showNamesOnly(vector<Inventory> inventory) {
+void showNamesOnly(vector<Inventory> inventory) {//shows only the names for the full inventory
 	for (int i = 0; i < inventory.size(); i++) {
 		cout << inventory[i].getInvName() << endl;
 	}
 	cout << "\n";
 }
-int searchName(vector<Inventory> inventory, string nameSearch) {
+int searchName(vector<Inventory> inventory, string nameSearch) {//searches the inventory and returns an int indicating vector location
 	for (int i = 0; i < inventory.size(); i++) {
 		inventory[i].getInvName();
 		if (nameSearch == inventory[i].getInvName())
@@ -421,9 +389,12 @@ int searchName(vector<Inventory> inventory, string nameSearch) {
 	}
 	return -1;
 }
-void searchGenres(vector<Inventory> inventory, string genreSearch) {
+void searchGenres(vector<Inventory> inventory) {//searched through the inventory for a specific genre and displays all instances
 	bool found = false;
-	string full;
+	string genreSearch;
+	cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
+	cin.ignore(50, '\n');
+	getline(cin, genreSearch);
 	cout << "Showing all owned games with the genre containing '" << genreSearch << "'..." << endl;
 	cout << "----------------------------------------------------------------------" << endl;
 	for (int i = 0; i < inventory.size(); i++) {
@@ -435,7 +406,7 @@ void searchGenres(vector<Inventory> inventory, string genreSearch) {
 	if (found != true)
 		cout << "No games found with '" << genreSearch << "' in the genre. Please check the spelling.." << endl;
 }
-void showBacklog(vector<Inventory> inventory) {
+void showBacklog(vector<Inventory> inventory) {//displays all games with a rating of '0'
 	double select = 1;
 	cout << "These are all the games in your backlog (games you havent played enough to provide a rating)" << endl;
 	cout << "--------------------------------------------------------------------------------------------" << endl;
@@ -445,7 +416,7 @@ void showBacklog(vector<Inventory> inventory) {
 			cout << inventory[i].getInvName() << endl;
 	}
 }
-void showTopRated(vector<Inventory> inventory) {
+void showTopRated(vector<Inventory> inventory) {//shows only the games rated '4.7' or higher
 	double select = 0.0;
 	cout << "These are all your games that have a (self-declared) rating of at least 4.7 out of 5 along with their publishers" << endl;
 	cout << "----------------------------------------------------------------------------------------------------------------" << endl;
@@ -455,8 +426,12 @@ void showTopRated(vector<Inventory> inventory) {
 			cout << setw(40) << right << inventory[i].getInvName() << " - " << setw(3) << setprecision(1) << fixed << left << inventory[i].getInvRate() << " - " << setw(40) << left << inventory[i].getInvPub() << endl;
 	}
 }
-void searchPublisher(vector<Inventory> inventory, string pubSearch) {
+void searchPublisher(vector<Inventory> inventory) {//searchs the inventory for a specific publisher
+	string pubSearch;
 	bool found = false;
+	cout << "Please enter the publisher you would like to search for (case-sensitive):" << endl;
+	cin.ignore(50, '\n');
+	getline(cin, pubSearch);
 	cout << "Showing all owned games published by '" << pubSearch << "' and their developers" << endl;
 	cout << "----------------------------------------------------------------------------" << endl;
 	for (int i = 0; i < inventory.size(); i++) {
@@ -468,8 +443,12 @@ void searchPublisher(vector<Inventory> inventory, string pubSearch) {
 	if (found != true)
 		cout << "No games found published by '" << pubSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void searchDeveloper(vector<Inventory> inventory, string devSearch) {
+void searchDeveloper(vector<Inventory> inventory) {//searches the inventory for a specific developer
+	string devSearch;
 	bool found = false;
+	cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
+	cin.ignore(50, '\n');
+	getline(cin, devSearch);
 	cout << "Showing all owned games published by '" << devSearch << "' and their publishers" << endl;
 	cout << "----------------------------------------------------------------------------" << endl;
 	for (int i = 0; i < inventory.size(); i++) {
@@ -481,7 +460,7 @@ void searchDeveloper(vector<Inventory> inventory, string devSearch) {
 	if (found != true)
 		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void addNewGame(vector<Inventory> &inventory) {
+void addNewGame(vector<Inventory> &inventory) {//adds a new game to the inventory
 	Inventory tempSlot, tempSlot2;
 	char error;
 	string name, pub, dev, genre1, genre2, genre3, fullG;
@@ -508,10 +487,9 @@ void addNewGame(vector<Inventory> &inventory) {
 	cout << "\nThis is what you entered:" << endl;
 	cout << "------------------------------------------" << endl;
 	tempSlot.displayNewGame();
-	cout << "\nAny errors? (Y/N) ";
-	cin >> error;
-	error = toupper(error);
-	if (error == 'Y') {
+	cout << "\nIs everything correct? (Y/N) ";
+	error = yesNo(error);
+	if (error == 'N') {
 		cout << "The info has not been stored. Choose option '11' from the main menu if you want to try again" << endl;
 	}
 	else {
@@ -520,7 +498,7 @@ void addNewGame(vector<Inventory> &inventory) {
 		writeInvToFiles(inventory);
 	}
 }
-void writeInvToFiles(vector<Inventory> inventory) {
+void writeInvToFiles(vector<Inventory> inventory) {//writes the information in the inventory vector to each respective file
 	fstream writeNames, writePrices, writePubs, writeDevs, writeGenre1, writeGenre2, writeGenre3, writeSizes, writeRatings;
 
 	writeNames.open("names.txt", ios::out); writePrices.open("prices.txt", ios::out); writePubs.open("pubs.txt", ios::out);
@@ -543,12 +521,12 @@ void writeInvToFiles(vector<Inventory> inventory) {
 	writeNames.close(); writePrices.close(); writePubs.close(); writeDevs.close(); writeGenre1.close();
 	writeGenre2.close(); writeGenre3.close(); writeSizes.close(); writeRatings.close();
 }
-void editInvItem(vector<Inventory>& inventory) {
+void editInvItem(vector<Inventory>& inventory) {//edits the information of a signle game
 	Inventory tempSlot;
 	string search, name, pub, dev, genre1, genre2, genre3, fullG;
 	double price, size, rating;
 	int found;
-	char yn = 'N';
+	char yn, again;
 	do {
 		cout << "Enter the name of the game you would like to edit the information for:" << endl;
 		cin.ignore(100, '\n');
@@ -580,13 +558,7 @@ void editInvItem(vector<Inventory>& inventory) {
 				cout << "\nIs everything correct?" << endl;
 				tempSlot.displayInv();
 				cout << "\nY/N : ";
-				cin >> yn;
-				yn = toupper(yn);
-				while (yn != 'Y' && yn != 'N') {
-					cout << "Inavild input! Enter 'Y' or 'N' only!" << endl;
-					cin >> yn;
-					yn = toupper(yn);
-				}
+				yn = yesNo(yn);
 				if (yn == 'Y') {
 					inventory[found] = tempSlot;
 				}
@@ -599,23 +571,27 @@ void editInvItem(vector<Inventory>& inventory) {
 		else {
 			cout << "The game you are trying to edit could not be found.." << endl;
 			cout << "Would you like to try again? (Y/N):";
-			cin >> yn;
+			again = yesNo(again);
 		}
-	} while (yn == 'Y');
+	} while (again == 'Y');
 
 }
-void removeInvItem(vector<Inventory> &inventory, string nameSearch) {
+void removeInvItem(vector<Inventory> &inventory, string nameSearch) {//removes a single game from the inventory
 	int x = -1;
 	x = searchName(inventory, nameSearch);
-	inventory.erase(inventory.begin() + x);
-	writeInvToFiles(inventory);
-	if (x < 0) {
+	if (x > -1) {
+		inventory.erase(inventory.begin() + x);
+		cout << "The game " << inventory[x].getInvName() << " has been removed from your inventory.." << endl;
+		writeInvToFiles(inventory);
+		cout << "..And your files have been updated" << endl;
+	}
+	else {
 		cout << "Game not found.." << endl;
 	}
 }
 
 
-int wlMenu() {
+int wlMenu() {//displays the wishlist menu and return an int
 	int choice = 0;
 	cout << "***********************************" << endl;
 	cout << "****---- WISHLIST  MANAGER ----****" << endl;
@@ -628,17 +604,13 @@ int wlMenu() {
 	cout << "4. Show release dates for upcoming games" << endl;
 	cout << "5. Manage a single entry" << endl;
 	cout << "Enter your choice now: " << endl;
-	cin >> choice;
-	while (choice > 5 || choice < 0) {
-		cout << "Please enter a valid choice (0 - 5): ";
-		cin >> choice;
-	}
+	choice = validate(0, 5);
 	cout << "\n";
 	return choice;
 }
-void getFullWishlist(vector<Wishlist>& wishlist, vector<string>& genres1, vector<string>& genres2, vector<string>& genres3) {
+void getFullWishlist(vector<Wishlist>& wishlist) {//gets the full wishlist from the files and stores the info in a vector
 	double price, size;
-	string name, pub, dev, genre1, genre2, genre3, fullGenre, release;
+	string name, pub, dev, genre1, genre2, genre3, fullG, release;
 	fstream readNames, readPrices, readPubs, readDevs, readGenre1, readGenre2, readGenre3, readSizes, readDates;
 
 	readNames.open("namesWL.txt", ios::in); readPrices.open("pricesWL.txt", ios::in); readPubs.open("pubsWL.txt", ios::in);
@@ -651,33 +623,30 @@ void getFullWishlist(vector<Wishlist>& wishlist, vector<string>& genres1, vector
 		getline(readPubs, pub);
 		getline(readDevs, dev);
 		getline(readGenre1, genre1);
-		genres1.push_back(genre1);
 		getline(readGenre2, genre2);
-		genres2.push_back(genre2);
 		getline(readGenre3, genre3);
-		genres3.push_back(genre3);
-		fullGenre = genre1 + " " + genre2 + " " + genre3;
+		fullG = fullGenreMaker(genre1, genre2, genre3);
 		readSizes >> size;
 		readDates >> release;
-		tempSlot.storeWLitem(name, price, pub, dev, fullGenre, size, release);
+		tempSlot.storeWLitem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, release);
 		wishlist.push_back(tempSlot);
 	}
 	readNames.close(); readPrices.close(); readPubs.close(); readDevs.close();
 	readGenre1.close(); readGenre2.close(); readGenre3.close(); readSizes.close(); readDates.close();
 }
-void showFullWishlist(vector<Wishlist> wishlist) {
+void showFullWishlist(vector<Wishlist> wishlist) {//displays the full wishlist
 	for (int i = 0; i < wishlist.size(); i++) {
 		wishlist.at(i).displayWL();
 	}
 	cout << "\n";
 }
-void showWishlistNames(vector<Wishlist> wishlist) {
+void showWishlistNames(vector<Wishlist> wishlist) {//shows only the names of the games in the wishlist
 	for (int i = 0; i < wishlist.size(); i++) {
 		cout << wishlist[i].getWLName() << endl;
 	}
 	cout << "\n";
 }
-int searchWLNames(vector<Wishlist> wishlist, string nameSearch) {
+int searchWLNames(vector<Wishlist> wishlist, string nameSearch) {//searches the wishlist for a specific name and returns an int 
 	for (int i = 0; i < wishlist.size(); i++) {
 		wishlist[i].getWLName();
 		if (nameSearch == wishlist[i].getWLName())
@@ -685,7 +654,7 @@ int searchWLNames(vector<Wishlist> wishlist, string nameSearch) {
 	}
 	return -1;
 }
-void searchWLPub(vector<Wishlist> wishlist, string pubSearch) {
+void searchWLPub(vector<Wishlist> wishlist, string pubSearch) {//searches the wishlist for a specific publisher
 	bool found = false;
 	cout << "Showing all owned games published by '" << pubSearch << "' and their developers" << endl;
 	cout << "----------------------------------------------------------------------------" << endl;
@@ -698,7 +667,7 @@ void searchWLPub(vector<Wishlist> wishlist, string pubSearch) {
 	if (found != true)
 		cout << "No games found published by '" << pubSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void searchWLDev(vector<Wishlist> wishlist, string devSearch) {
+void searchWLDev(vector<Wishlist> wishlist, string devSearch) {//searches the wishlist for a specific developer
 	bool found = false;
 	cout << "Showing all owned games published by '" << devSearch << "' and their publishers" << endl;
 	cout << "----------------------------------------------------------------------------" << endl;
@@ -711,20 +680,20 @@ void searchWLDev(vector<Wishlist> wishlist, string devSearch) {
 	if (found != true)
 		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void searchWLGenres(vector<Wishlist>wishlist, vector<string>genresW1, vector<string>genresW2, vector<string>genresW3, string genreSearch) {
+void searchWLGenres(vector<Wishlist>wishlist, string genreSearch) {//searches the wishlist for a specific genre
 	bool found = false;
 	cout << "Showing all owned games with the genre containing '" << genreSearch << "'..." << endl;
 	cout << "----------------------------------------------------------------------" << endl;
 	for (int i = 0; i < wishlist.size(); i++) {
-		if (genresW1[i] == genreSearch || genresW2[i] == genreSearch || genresW3[i] == genreSearch) {
-			cout << setw(40) << right << wishlist[i].getWLName() << " - " << setw(40) << left << wishlist[i].getWLGenre() << endl;
+		if (wishlist[i].getWLGenre() == genreSearch || wishlist[i].getWLGenre2() == genreSearch || wishlist[i].getWLGenre3() == genreSearch) {
+			cout << setw(40) << right << wishlist[i].getWLName() << " - " << setw(40) << left << wishlist[i].getWLFullG() << endl;
 			found = true;
 		}
 	}
 	if (found != true)
 		cout << "No games found with '" << genreSearch << "' in the genre. Please check the spelling.." << endl;
 }
-void showUpcomingGames(vector<Wishlist> wishlist) {
+void showUpcomingGames(vector<Wishlist> wishlist) {//shows only the games that are not currently available
 	string found;
 	for (int i = 0; i < wishlist.size(); i++) {
 		found = wishlist[i].getWLAvail();
@@ -734,10 +703,10 @@ void showUpcomingGames(vector<Wishlist> wishlist) {
 	}
 	cout << "\n";
 }
-void addGameToWL(vector<Wishlist>& wishlist, vector<string>& genresW1, vector<string>& genresW2, vector<string>& genresW3) {
+void addGameToWL(vector<Wishlist>& wishlist) {//adds a game to the wishlist
 	Wishlist tempSlot, tempSlot2;
 	char error;
-	string name, pub, dev, genre1, genre2, genre3, fullGenre, avail;
+	string name, pub, dev, genre1, genre2, genre3, fullG, avail;
 	double price, size;
 	cout << "Name of the game you would like to add:" << endl;
 	cin.ignore(50, '\n');
@@ -752,37 +721,33 @@ void addGameToWL(vector<Wishlist>& wishlist, vector<string>& genresW1, vector<st
 	genre1 = genre1select();
 	genre2 = genre2select();
 	genre3 = genre3select();
-	fullGenre = fullGenreMaker(genre1, genre2, genre3);
+	fullG = fullGenreMaker(genre1, genre2, genre3);
 	cout << "\nSize of the game:" << endl;
 	cin >> size;
 	cout << "\nAvailabilty (enter the date as 'mm/dd/yy', or 'YES' if already released" << endl;
 	cin.ignore(100, '\n');
 	getline(cin, avail);
-	tempSlot.storeWLitem(name, price, pub, dev, fullGenre, size, avail);
+	tempSlot.storeWLitem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, avail);
 	cout << "\nThis is what you entered:" << endl;
 	cout << "------------------------------------------" << endl;
 	tempSlot.displayWL();
-	cout << "\nAny errors? (Y/N) ";
-	cin >> error;
-	error = toupper(error);
-	if (error == 'Y') {
+	cout << "\nIs everything correct? (Y/N) ";
+	error = yesNo(error);
+	if (error == 'N') {
 		cout << "The info has not been stored. Choose option '11' from the main menu if you want to try again" << endl;
 	}
 	else {
-		genresW1.push_back(genre1);
-		genresW2.push_back(genre2);
-		genresW3.push_back(genre3);
 		wishlist.push_back(tempSlot);
 		cout << "Well done! Writing the new info to your files now.." << endl;
-		writeWLToFiles(wishlist, genresW1, genresW2, genresW3);
+		writeWLToFiles(wishlist);
 	}
 }
-void editWLitem(vector<Wishlist>& wishlist, vector<string>& genresW1, vector<string>& genresW2, vector<string>& genresW3) {
+void editWLitem(vector<Wishlist>& wishlist) {//edits a game's info in the wishlist
 	Wishlist tempSlot;
-	string search, name, pub, dev, genre1, genre2, genre3, fullGenre, avail;
+	string search, name, pub, dev, genre1, genre2, genre3, fullG, avail;
 	double price, size;
 	int found;
-	char yn = 'N';
+	char yn, again;
 	do {
 		cout << "Enter the name of the game you would like to edit the information for:" << endl;
 		cin.ignore(100, '\n');
@@ -805,48 +770,37 @@ void editWLitem(vector<Wishlist>& wishlist, vector<string>& genresW1, vector<str
 				genre1 = genre1select();
 				genre2 = genre2select();
 				genre3 = genre3select();
-				fullGenre = fullGenreMaker(genre1, genre2, genre3);
+				fullG = fullGenreMaker(genre1, genre2, genre3);
 				cout << "\nSize of the game:" << endl;
 				cin >> size;
 				cout << "\nIs this games avaialble now? Enter 'YES' or the date it will be available in this format: mm/dd/yy" << endl;
 				cin.ignore(100, '\n');
 				getline(cin, avail);
-				tempSlot.storeWLitem(name, price, pub, dev, fullGenre, size, avail);
+				tempSlot.storeWLitem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, avail);
 				cout << "\nIs everything correct?" << endl;
 				tempSlot.displayWL();
 				cout << "\nY/N : ";
-				cin >> yn;
-				yn = toupper(yn);
-				while (yn != 'Y' && yn != 'N') {
-					cout << "Inavild input! Enter 'Y' or 'N' only!" << endl;
-					cin >> yn;
-					yn = toupper(yn);
-				}
+				yn = yesNo(yn);
 				if (yn == 'Y') {
 					wishlist[found] = tempSlot;
-					genresW1[found] = genre1;
-					genresW2[found] = genre2;
-					genresW3[found] = genre3;
 				}
 				else
 					cout << "Starting over.." << endl << endl;
 			} while (yn == 'N');
-			writeWLToFiles(wishlist, genresW1, genresW2, genresW3);
+			writeWLToFiles(wishlist);
 			cout << "The new information is now stored!" << endl << endl;
 		}
 		else {
 			cout << "The game you are trying to edit could not be found.." << endl;
 			cout << "Would you like to try again? (Y/N):";
-			cin >> yn;
+			again = yesNo(again);
 		}
-	} while (yn == 'Y');
+	} while (again == 'Y');
 }
-void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist, vector<string>& genres1, vector<string>& genres2,
-	vector<string>& genres3, vector<string>& genresW1, vector<string>& genresW2, vector<string>& genresW3) {
-
+void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist) {//moves a game from the inventory to the wishlist
 	Inventory tempInvSlot;
 	int found;
-	string nameSearch, name, pub, dev, genre;
+	string nameSearch, name, pub, dev, genre1, genre2, genre3, fullG;
 	string nameWL, pubWL, devWL;
 	double price, size, rating = 0;
 	char yn;
@@ -859,31 +813,24 @@ void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist, vector<
 		cout << "FOUND!" << endl;
 		wishlist[found].displayWL();
 		cout << "\nPlease confirm this game was purchased and should be moved to your inventory. (Y/N)" << endl;
-		cin >> yn;
-		yn = toupper(yn);
-		while (yn != 'Y' && yn != 'N') {
-			cout << "Invalid entry.. enter 'Y' or 'N' only: ";
-			cin >> yn;
-		}
-		genres1.push_back(genresW1[found]);
-		genres2.push_back(genresW2[found]);
-		genres3.push_back(genresW3[found]);
+		yn = yesNo(yn);
 		name = wishlist[found].getWLName();
 		price = wishlist[found].getWLPrice();
 		pub = wishlist[found].getWLPub();
 		dev = wishlist[found].getWLDev();
-		genre = fullGenreMaker(genresW1[found], genresW2[found], genresW3[found]);
+		genre1 = wishlist[found].getWLGenre();
+		genre2 = wishlist[found].getWLGenre2();
+		genre3 = wishlist[found].getWLGenre3();
+		fullG = fullGenreMaker(genre1, genre2, genre3);
 		size = wishlist[found].getWLSize();
-		tempInvSlot.storeInvItem(name, price, pub, dev, genre, size, rating);
+		tempInvSlot.storeInvItem(name, price, pub, dev, genre1, genre2, genre3, fullG, size, rating);
 		inventory.push_back(tempInvSlot);
 		cout << "The game has been added to your inventory.." << endl;
 		wishlist.erase(wishlist.begin() + found);
-		genresW1.erase(genresW1.begin() + found);
-		genresW2.erase(genresW2.begin() + found);
-		genresW3.erase(genresW3.begin() + found);
 		cout << "..And removed from your wishlist" << endl << endl;
-		writeInvToFiles(inventory, genres1, genres2, genres3);
-		writeWLToFiles(wishlist, genresW1, genresW2, genresW3);
+		writeInvToFiles(inventory);
+		writeWLToFiles(wishlist);
+		cout << "Your inventory and wishlist files have been updated" << endl;
 	}
 	else {
 		cout << "The game was not found in your inventory" << endl;
@@ -891,32 +838,21 @@ void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist, vector<
 	
 
 }
-void removeWLitem(vector<Wishlist>& wishlist, vector<string>& genresW1, vector<string>& genresW2, vector<string>& genresW3) {
+void removeWLitem(vector<Wishlist>& wishlist, string nameSearch) {//removes a game form the wishlist
 	int x = -1;
-	string nameSearch;
-	bool found = false;
-	cout << "Please enter the name of the game you want to remove" << endl;
-	cin.ignore(100, '\n');
-	getline(cin, nameSearch);
-	for (int i = 0; i < wishlist.size(); i++) {
-		wishlist[i].getWLName();
-		if (nameSearch == wishlist[i].getWLName()) {
-			cout << "Removing " << nameSearch << " from your wishlist" << endl;
-			wishlist.erase(wishlist.begin() + i);
-			genresW1.erase(genresW1.begin() + i);
-			genresW2.erase(genresW2.begin() + i);
-			genresW3.erase(genresW3.begin() + i);
-			writeWLToFiles(wishlist, genresW1, genresW2, genresW3);
-			found = true;
-			break;
-		}
+	x = searchWLNames(wishlist, nameSearch);
+	if (x > -1) {
+		wishlist.erase(wishlist.begin() + x);
+		cout << "The game "<< wishlist[x].getWLName() << "has been removed from your wishlist.." << endl;
+		writeWLToFiles(wishlist);
+		cout << "..And your files have been updated" << endl;
 	}
-	if (found = false) {
+	else {
 		cout << "Game not found.." << endl;
 	}
 	
 }
-void writeWLToFiles(vector<Wishlist> wishlist, vector<string> genresW1, vector<string> genresW2, vector<string> genresW3) {
+void writeWLToFiles(vector<Wishlist> wishlist) {//writes the information in the wishlist vector to each respective file
 	fstream writeNames, writePrices, writePubs, writeDevs, writeGenre1, writeGenre2, writeGenre3, writeSizes, writeRatings;
 
 	writeNames.open("namesWL.txt", ios::out); writePrices.open("pricesWL.txt", ios::out); writePubs.open("pubsWL.txt", ios::out);
@@ -928,9 +864,9 @@ void writeWLToFiles(vector<Wishlist> wishlist, vector<string> genresW1, vector<s
 		writePrices << wishlist[i].getWLPrice() << "\n";
 		writePubs << wishlist[i].getWLPub() << "\n";
 		writeDevs << wishlist[i].getWLDev() << "\n";
-		writeGenre1 << genresW1[i] << "\n";
-		writeGenre2 << genresW2[i] << "\n";
-		writeGenre3 << genresW3[i] << "\n";
+		writeGenre1 << wishlist[i].getWLGenre() << "\n";
+		writeGenre2 << wishlist[i].getWLGenre2() << "\n";
+		writeGenre3 << wishlist[i].getWLGenre3() << "\n";
 		writeSizes << wishlist[i].getWLSize() << "\n";
 		writeRatings << wishlist[i].getWLAvail() << "\n";
 	}
@@ -941,57 +877,57 @@ void writeWLToFiles(vector<Wishlist> wishlist, vector<string> genresW1, vector<s
 }
 
 
-string genre1select() {
+string genre1select() {//returns a string containing the first genre of a game based on user input
 	string genre1c;
 	string genre1[] = { "Action", "Strategy", "Turn - Based", "Simulation" };
-	int genre1m;
+	int choice;
 	cout << "\nEnter the number that corresponds with your choice for each genre category" << endl;
 	cout << "1st genre category (of 3)" << endl;
 	cout << "1.Action |2. Strategy |3. Turn-Based |4. Simulation" << endl;
-	cin >> genre1m;
-	while (genre1m > 4 || genre1m < 1) {
-		cout << "Invalid number entered! Try again.." << endl;
-		cin >> genre1m;
-	}
-	genre1c = genre1[genre1m - 1];
+	choice = validate(1, 4);
+	genre1c = genre1[choice - 1];
 	return genre1c;
 }
-string genre2select() {
+string genre2select() {//returns a string containing the second genre of a game based on user input
 	string genre2c;
 	string genre2[] = { "Adventure", "Platformer", "Arcade", "Deck-Builder", "Puzzle" };
-	int genre2m;
+	int choice;
 	cout << "\n2nd genre category (of 3)" << endl;
 	cout << "1.Adventure |2. Platformer |3. Arcade |4. Deck-Builder |5. Puzzle" << endl;
-	cin >> genre2m;
-	while (genre2m > 5 || genre2m < 1) {
-		cout << "Invalid number entered! Try again.." << endl;
-		cin >> genre2m;
-	}
-	genre2c = genre2[genre2m - 1];
+	choice = validate(1, 5);
+	genre2c = genre2[choice - 1];
 	return genre2c;
 }
-string genre3select() {
+string genre3select() {//returns a string containing the third genre of a game based on user input
 	string genre3c;
 	string genre3[] = { "Roguelike", "Fighting", "RPG", "Platformer", "Survival", "Exploration", "Lifestyle" };
-	int genre3m;
+	int choice;
 	cout << "\n3rd genre category (last)" << endl;
 	cout << "1. Roguelike |2. Fighting |3. RPG |4. Platformer |5. Survival |6. Exploration |7. Lifestyle" << endl;
-	cin >> genre3m;
-	while (genre3m > 7 || genre3m < 1) {
-		cout << "Invalid number entered! Try again.." << endl;
-		cin >> genre3m;
-	}
-	genre3c = genre3[genre3m - 1];
+	choice = validate(1, 7);
+	genre3c = genre3[choice - 1];
 	return genre3c;
 }
-string fullGenreMaker(string genre1, string genre2, string genre3) {
+string fullGenreMaker(string genre1, string genre2, string genre3) {//combines the 3 genres of a game into 1 string and returns it
 	string fullGenre;
 	fullGenre = genre1 + " " + genre2 + " " + genre3;
 	return fullGenre;
 }
-void createFullGenreVec(vector<string>&fullGenres, vector<string>genres1, vector<string>genres2, vector<string>genres3) {
-	
-	for (int i = 0; i < genres1.size(); i++) {
-		fullGenres[i] = fullGenreMaker(genres1[i], genres2[i], genres3[i]);
+char yesNo(char yn) {//converts a user input char to uppercase and confirms it is 'Y' or 'N'
+	cin >> yn;
+	yn = toupper(yn);
+	while (yn != 'Y' && yn != 'N') {
+		cout << "Invalid input! Please eneter 'Y' or 'N': ";
+		cin >> yn;
 	}
+	return yn;
+}
+int validate(int bottom, int top) {//takes and validates user input for menus
+	int choice;
+	cin >> choice;
+	while (choice < bottom || choice > top) {
+		cout << "Invalid input! Please enter a number between " << bottom << " and " << top << endl;
+		cin >> choice;
+	}
+	return choice;
 }

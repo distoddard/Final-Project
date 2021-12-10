@@ -16,6 +16,7 @@ private:
 	string genreWL;
 	string genreWL2;
 	string genreWL3;
+	string fullGWL;
 	double sizeWL;
 	string avail;
 
@@ -28,11 +29,12 @@ public:
 		genreWL = "";
 		genreWL2 = "";
 		genreWL3 = "";
+		fullGWL = "";
 		sizeWL = 0.0;
 		avail = "";
 	}
 
-	void storeWLitem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, double size, string available);
+	void storeWLitem(string name, double price, string pub, string dev, string genre1, string genre2, string genre3, string fullG, double size, string available);
 	void displayWL();
 	string getWLName();
 	double getWLPrice();
@@ -41,6 +43,7 @@ public:
 	string getWLGenre();
 	string getWLGenre2();
 	string getWLGenre3();
+	string getWLFullG();
 	double getWLSize();
 	string getWLAvail();
 };

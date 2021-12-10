@@ -3,7 +3,7 @@
 #include "wishList.h"
 using namespace std;
 
-void Wishlist::storeWLitem(string name, double price, string pub, string dev, string genre, string genre2, string genre3, double size, string available) {
+void Wishlist::storeWLitem(string name, double price, string pub, string dev, string genre, string genre2, string genre3, string fullG, double size, string available) {
 	nameWL = name;
 	priceWL = price;
 	pubWL = pub;
@@ -11,6 +11,7 @@ void Wishlist::storeWLitem(string name, double price, string pub, string dev, st
 	genreWL = genre;
 	genreWL2 = genre2;
 	genreWL3 = genre3;
+	fullGWL = fullG;
 	sizeWL = size;
 	avail = available;
 }
@@ -21,7 +22,7 @@ void Wishlist::displayWL() {
 	cout << "Price: $" << fixed << setprecision(2) << priceWL << endl;
 	cout << "Publisher: " << pubWL << endl;
 	cout << "Developer: " << devWL << endl;
-	cout << "Genre: " << genreWL << endl;
+	cout << "Genre: " << fullGWL << endl;
 	if (sizeWL > 32)
 		cout << "Size: " << sizeWL << " MB" << endl;
 	else
@@ -53,6 +54,9 @@ string Wishlist::getWLGenre2() {
 }
 string Wishlist::getWLGenre3() {
 	return genreWL3;
+}
+string Wishlist::getWLFullG() {
+	return fullGWL;
 }
 double Wishlist::getWLSize() {
 	return sizeWL;

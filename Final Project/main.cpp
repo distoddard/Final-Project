@@ -100,8 +100,9 @@ int main() {
 	double totalSize, totalValue;
 	string nameSearch, genreSearch, pubSearch, devSearch;
 	vector<Inventory> inventory;
+	vector<Wishlist> wishlist;
 	vector<string> genres1; vector<string> genres2; vector<string> genres3;
-	
+	vector<string> genresW1; vector<string> genresW2; vector<string> genresW3;
 	getFullInventory(inventory, genres1, genres2, genres3);
 	
 
@@ -160,7 +161,7 @@ int main() {
 						cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
 						cin.ignore(50, '\n');
 						getline(cin, devSearch);
-						searchPublisher(inventory, devSearch);
+						searchDeveloper(inventory, devSearch);
 						break;
 					case GENRE:
 						cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
@@ -234,18 +235,68 @@ int main() {
 					cout << "Returning to the main menu..." << endl << endl;
 					break;
 				case 1:
+					showFullWishlist(wishlist);
 					break;
 				case 2:
+					showWishlistNames(wishlist);
 					break;
 				case 3:
+					cout << "What would you like to search by?" << endl;
+					cout << "1. NAME	|2.	PUBLISHER |3. DEVELOPER |4. GENRE	|0. CANCEL SEARCH" << endl;
+					cin >> searchChoice;
+					while (searchChoice < 0 || searchChoice > 4) {
+						cout << "Please enter a valid choice (1 - 4): " << endl;
+						cin >> searchChoice;
+					}
+					searchEnum = static_cast<Search>(searchChoice);
+					switch (searchEnum)
+					{
+					case NAME:
+						cout << "Please enter the name of the game you want to search for (case-sensitive):" << endl;
+						cin.ignore(50, '\n');
+						getline(cin, nameSearch);
+						foundNameLocation = searchWLNames(wishlist, nameSearch);
+						if (foundNameLocation > -1)
+							wishlist[foundNameLocation].displayWL();
+						else
+							cout << "Game not found! Check your spelling or get on the eShop and buy it!" << endl;
+						break;
+					case PUB:
+						cout << "Please enter the publisher you would like to search for (case-sensitive):" << endl;
+						cin.ignore(50, '\n');
+						getline(cin, pubSearch);
+						searchWLPub(wishlist, pubSearch);
+						break;
+					case DEV:
+						cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
+						cin.ignore(50, '\n');
+						getline(cin, devSearch);
+						searchWLDev(wishlist, devSearch);
+						break;
+					case GENRE:
+						cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
+						cin.ignore(50, '\n');
+						getline(cin, genreSearch);
+						searchWLGenres(wishlist, genresW1, genresW2, genresW3, genreSearch);
+						break;
+					case RETURN:
+						cout << "Returning to previous menu.." << endl << endl;
+						break;
+					default:
+						break;
+					}
 					break;
 				case 4:
+					showUpcomingGames(wishlist);
 					break;
 				case 5:
+					addGameToWL(wishlist, genresW1, genresW2, genresW3);
 					break;
 				case 6:
+					moveToInv(inventory, wishlist, genres1, genres2, genres3, genresW1, genresW2, genresW3);
 					break;
 				case 7:
+					removeWLitem(wishlist, genresW1, genresW2, genresW3);
 					break;
 				default:
 					break;
@@ -624,7 +675,98 @@ int searchWLNames(vector<Wishlist> wishlist, string nameSearch) {
 	}
 	return -1;
 }
-
+void searchWLPub(vector<Wishlist> wishlist, string pubSearch) {
+	bool found = false;
+	cout << "Showing all owned games published by '" << pubSearch << "' and their developers" << endl;
+	cout << "----------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < wishlist.size(); i++) {
+		if (wishlist[i].getWLPub() == pubSearch) {
+			cout << setw(40) << right << wishlist[i].getWLName() << " - " << setw(40) << left << wishlist[i].getWLDev() << endl;
+			found = true;
+		}
+	}
+	if (found != true)
+		cout << "No games found published by '" << pubSearch << "'. Please check the spelling, or get some!" << endl;
+}
+void searchWLDev(vector<Wishlist> wishlist, string devSearch) {
+	bool found = false;
+	cout << "Showing all owned games published by '" << devSearch << "' and their publishers" << endl;
+	cout << "----------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < wishlist.size(); i++) {
+		if (wishlist[i].getWLDev() == devSearch) {
+			cout << setw(40) << right << wishlist[i].getWLName() << " - " << setw(40) << left << wishlist[i].getDevPub() << endl;
+			found = true;
+		}
+	}
+	if (found != true)
+		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
+}
+void searchWLGenres(vector<Wishlist>wishlist, vector<string>genresW1, vector<string>genresW2, vector<string>genresW3, string genreSearch) {
+	bool found = false;
+	cout << "Showing all owned games with the genre containing '" << genreSearch << "'..." << endl;
+	cout << "----------------------------------------------------------------------" << endl;
+	for (int i = 0; i < wishlist.size(); i++) {
+		if (genresW1[i] == genreSearch || genresW2[i] == genreSearch || genresW3[i] == genreSearch) {
+			cout << setw(40) << right << wishlist[i].getWLName() << " - " << setw(40) << left << wishlist[i].getWLGenre() << endl;
+			found = true;
+		}
+	}
+	if (found != true)
+		cout << "No games found with '" << genreSearch << "' in the genre. Please check the spelling.." << endl;
+}
+void showUpcomingGames(vector<Wishlist> wishlist) {
+	string found;
+	for (int i = 0; i < wishlist.size(); i++) {
+		found = wishlist[i].getWLAvail();
+		if (found != "YES") {
+			cout << wishlist[i].getWLName() << " Releasing: " << wishlist[i].getWLAvail();
+		}
+	}
+	cout << "\n";
+}
+void addGameToWL(vector<Wishlist>& wishlist, vector<string>& genresW1, vector<string>& genresW2, vector<string>& genresW3) {
+	Wishlist tempSlot, tempSlot2;
+	char error;
+	string name, pub, dev, genre1, genre2, genre3, fullGenre, avail;
+	double price, size;
+	cout << "Name of the game you would like to add:" << endl;
+	cin.ignore(50, '\n');
+	getline(cin, name);
+	cout << "\nPrice of the game (not the sale price):" << endl;
+	cin >> price;
+	cin.ignore(100, '\n');
+	cout << "\nPublisher:" << endl;
+	getline(cin, pub);
+	cout << "\nDeveloper:" << endl;
+	getline(cin, dev);
+	genre1 = genre1select();
+	genre2 = genre2select();
+	genre3 = genre3select();
+	fullGenre = fullGenreMaker(genre1, genre2, genre3);
+	cout << "\nSize of the game:" << endl;
+	cin >> size;
+	cout << "\nAvailabilty (enter the date as 'mm/dd/yy', or 'YES' if already released" << endl;
+	cin.ignore(100, '\n');
+	getline(cin, avail);
+	tempSlot.storeWLitem(name, price, pub, dev, fullGenre, size, avail);
+	cout << "\nThis is what you entered:" << endl;
+	cout << "------------------------------------------" << endl;
+	tempSlot.displayWL();
+	cout << "\nAny errors? (Y/N) ";
+	cin >> error;
+	toupper(error);
+	if (error == 'Y') {
+		cout << "The info has not been stored. Choose option '11' from the main menu if you want to try again" << endl;
+	}
+	else {
+		genresW1.push_back(genre1);
+		genresW2.push_back(genre2);
+		genresW3.push_back(genre3);
+		wishlist.push_back(tempSlot);
+		cout << "Well done! Writing the new info to your files now.." << endl;
+		writeWLToFiles(wishlist, genresW1, genresW2, genresW3);
+	}
+}
 void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist, vector<string>& genres1, vector<string>& genres2,
 	vector<string>& genres3, vector<string>& genresW1, vector<string>& genresW2, vector<string>& genresW3) {
 
@@ -670,7 +812,45 @@ void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist, vector<
 	}
 
 }
+void removeWLitem(vector<Wishlist>& wishlist, vector<string>& genresW1, vector<string>& genresW2, vector<string>& genresW3) {
+	int x = 0;
+	string nameSearch;
+	cout << "Please enter the name of the game you want to remove" << endl;
+	cin.ignore(100, '\n');
+	getline(cin, nameSearch);
+	for (int i = 0; i < wishlist.size(); i++) {
+		wishlist[i].getWLName();
+		if (nameSearch == wishlist[i].getWLName())
+			x = i;
+	}
+	wishlist.erase(wishlist.begin() + x);
+	genresW1.erase(genresW1.begin() + x);
+	genresW2.erase(genresW2.begin() + x);
+	genresW3.erase(genresW3.begin() + x);
+}
+void writeWLToFiles(vector<Wishlist> wishlist, vector<string> genresW1, vector<string> genresW2, vector<string> genresW3) {
+	fstream writeNames, writePrices, writePubs, writeDevs, writeGenre1, writeGenre2, writeGenre3, writeSizes, writeRatings;
 
+	writeNames.open("namesWL.txt", ios::out); writePrices.open("pricesWL.txt", ios::out); writePubs.open("pubsWL.txt", ios::out);
+	writeDevs.open("devsWL.txt", ios::out); writeGenre1.open("genre1WL.txt", ios::out); writeGenre2.open("genre2WL.txt", ios::out);
+	writeGenre3.open("genre3WL.txt", ios::out); writeSizes.open("sizesWL.dat", ios::out | ios::binary); writeRatings.open("datesWL.txt", ios::out || ios::binary);
+
+	for (int i = 0; i < wishlist.size(); i++) {
+		writeNames << wishlist[i].getWLName() << "\n";
+		writePrices << wishlist[i].getWLPrice() << "\n";
+		writePubs << wishlist[i].getWLPub() << "\n";
+		writeDevs << wishlist[i].getWLDev() << "\n";
+		writeGenre1 << genresW1[i] << "\n";
+		writeGenre2 << genresW2[i] << "\n";
+		writeGenre3 << genresW3[i] << "\n";
+		writeSizes << wishlist[i].getWLSize() << "\n";
+		writeRatings << wishlist[i].getWLAvail() << "\n";
+	}
+	cout << "Your inventory files have been updated!" << endl << endl;
+
+	writeNames.close(); writePrices.close(); writePubs.close(); writeDevs.close(); writeGenre1.close();
+	writeGenre2.close(); writeGenre3.close(); writeSizes.close(); writeRatings.close();
+}
 
 
 string genre1select() {
@@ -714,7 +894,7 @@ string genre3select() {
 		cin >> genre3m;
 	}
 	genre3c = genre3[genre3m - 1];
-	return = genre3c;
+	return genre3c;
 }
 string fullGenreMaker(string genre1, string genre2, string genre3) {
 	string fullGenre;

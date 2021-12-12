@@ -16,17 +16,19 @@
 using namespace std;
 //main menu prototype
 int mainMenu();
+int searchMenu();
+int manageMenu();
 //inventory prototypes
 int invMenu();
 void getFullInventory(vector<Inventory> &);
 void showFullInventory(vector<Inventory>);
 void showNamesOnly(vector<Inventory>);
 int searchName(vector<Inventory>, string);
-void searchGenres(vector<Inventory>, string);
+void searchGenres(vector<Inventory>);
 void showBacklog(vector<Inventory>);
 void showTopRated(vector<Inventory>);
-void searchPublisher(vector<Inventory>, string);
-void searchDeveloper(vector<Inventory>, string);
+void searchPublisher(vector<Inventory>);
+void searchDeveloper(vector<Inventory>);
 void addNewGame(vector<Inventory> &);
 void writeInvToFiles(vector<Inventory>);
 void editInvItem(vector<Inventory>&);
@@ -38,13 +40,13 @@ void getFullWishlist(vector<Wishlist>&);
 void showFullWishlist(vector<Wishlist>);
 void showWishlistNames(vector<Wishlist>);
 int searchWLNames(vector<Wishlist>, string);
-void searchWLPub(vector<Wishlist>, string);
-void searchWLDev(vector<Wishlist>, string);
-void searchWLGenres(vector<Wishlist>, string);
+void searchWLPub(vector<Wishlist>);
+void searchWLDev(vector<Wishlist>);
+void searchWLGenres(vector<Wishlist>);
 void showUpcomingGames(vector<Wishlist>);
 void addGameToWL(vector<Wishlist>&);
 void editWLitem(vector<Wishlist>&);
-void removeWLitem(vector<Wishlist>&);
+void removeWLitem(vector<Wishlist>&, string);
 void moveToInv(vector<Inventory>&, vector<Wishlist>&);
 void writeWLToFiles(vector<Wishlist>);
 
@@ -53,6 +55,8 @@ string genre1select();
 string genre2select();
 string genre3select();
 string fullGenreMaker(string, string, string);
+char yesNo();
+int validate(int, int);
 //enumerators for menu options
 enum Menu {//main menu
 	EXIT,
@@ -242,19 +246,19 @@ int main()
 						cout << "Please enter the publisher you would like to search for (case-sensitive):" << endl;
 						cin.ignore(50, '\n');
 						getline(cin, pubSearch);
-						searchWLPub(wishlist, pubSearch);
+						searchWLPub(wishlist);
 						break;
 					case DEV://search by developer
 						cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
 						cin.ignore(50, '\n');
 						getline(cin, devSearch);
-						searchWLDev(wishlist, devSearch);
+						searchWLDev(wishlist);
 						break;
 					case GENRE://search by genre
 						cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
 						cin.ignore(50, '\n');
 						getline(cin, genreSearch);
-						searchWLGenres(wishlist, genreSearch);
+						searchWLGenres(wishlist);
 						break;
 					case RETURN://send user to previous menu
 						cout << "Returning to previous menu.." << endl << endl;
@@ -282,11 +286,15 @@ int main()
 						break;
 					case REMOVE://delete a game or move it to the inventory
 						cout << "Would you like to move the game to your inventory? (Y/N)" << endl;
-						yn = yesNo(yn);//validates the input char and returns an uppercase 'Y' or 'N'
+						yn = yesNo();//validates the input char and returns an uppercase 'Y' or 'N'
 						if (yn == 'Y')
 							moveToInv(inventory, wishlist);//move the game from the wishlist to the inventory
-						else
-							removeWLitem(wishlist);//delete the entry form the wishlist
+						else {
+							cout << "Please enter the name of the game you want to remove (case-sensitive):" << endl;
+							cin.ignore(50, '\n');
+							getline(cin, nameSearch);
+							removeWLitem(wishlist, nameSearch);//delete the entry form the wishlist
+						}
 						break;
 					default:
 						break;
@@ -490,7 +498,7 @@ void addNewGame(vector<Inventory> &inventory) {//adds a new game to the inventor
 	cout << "------------------------------------------" << endl;
 	tempSlot.displayNewGame();
 	cout << "\nIs everything correct? (Y/N) ";
-	error = yesNo(error);
+	error = yesNo();
 	if (error == 'N') {
 		cout << "The info has not been stored. Choose option '11' from the main menu if you want to try again" << endl;
 	}
@@ -560,7 +568,7 @@ void editInvItem(vector<Inventory>& inventory) {//edits the information of a sig
 				cout << "\nIs everything correct?" << endl;
 				tempSlot.displayInv();
 				cout << "\nY/N : ";
-				yn = yesNo(yn);
+				yn = yesNo();
 				if (yn == 'Y') {
 					inventory[found] = tempSlot;
 				}
@@ -573,7 +581,7 @@ void editInvItem(vector<Inventory>& inventory) {//edits the information of a sig
 		else {
 			cout << "The game you are trying to edit could not be found.." << endl;
 			cout << "Would you like to try again? (Y/N):";
-			again = yesNo(again);
+			again = yesNo();
 		}
 	} while (again == 'Y');
 
@@ -656,8 +664,12 @@ int searchWLNames(vector<Wishlist> wishlist, string nameSearch) {//searches the 
 	}
 	return -1;
 }
-void searchWLPub(vector<Wishlist> wishlist, string pubSearch) {//searches the wishlist for a specific publisher
+void searchWLPub(vector<Wishlist> wishlist) {//searches the wishlist for a specific publisher
 	bool found = false;
+	string pubSearch;
+	cout << "Please enter the publisher you would like to search for (case-sensitive):" << endl;
+	cin.ignore(50, '\n');
+	getline(cin, pubSearch);
 	cout << "Showing all owned games published by '" << pubSearch << "' and their developers" << endl;
 	cout << "----------------------------------------------------------------------------" << endl;
 	for (int i = 0; i < wishlist.size(); i++) {
@@ -669,8 +681,12 @@ void searchWLPub(vector<Wishlist> wishlist, string pubSearch) {//searches the wi
 	if (found != true)
 		cout << "No games found published by '" << pubSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void searchWLDev(vector<Wishlist> wishlist, string devSearch) {//searches the wishlist for a specific developer
+void searchWLDev(vector<Wishlist> wishlist) {//searches the wishlist for a specific developer
+	string devSearch;
 	bool found = false;
+	cout << "Please enter the developer you would like to search for (case-sensitive):" << endl;
+	cin.ignore(50, '\n');
+	getline(cin, devSearch);
 	cout << "Showing all owned games published by '" << devSearch << "' and their publishers" << endl;
 	cout << "----------------------------------------------------------------------------" << endl;
 	for (int i = 0; i < wishlist.size(); i++) {
@@ -682,8 +698,12 @@ void searchWLDev(vector<Wishlist> wishlist, string devSearch) {//searches the wi
 	if (found != true)
 		cout << "No games found developed by '" << devSearch << "'. Please check the spelling, or get some!" << endl;
 }
-void searchWLGenres(vector<Wishlist>wishlist, string genreSearch) {//searches the wishlist for a specific genre
+void searchWLGenres(vector<Wishlist>wishlist) {//searches the wishlist for a specific genre
 	bool found = false;
+	string genreSearch;
+	cout << "Please enter the genre you would like to search for (case-sensitive):" << endl;
+	cin.ignore(50, '\n');
+	getline(cin, genreSearch);
 	cout << "Showing all owned games with the genre containing '" << genreSearch << "'..." << endl;
 	cout << "----------------------------------------------------------------------" << endl;
 	for (int i = 0; i < wishlist.size(); i++) {
@@ -734,7 +754,7 @@ void addGameToWL(vector<Wishlist>& wishlist) {//adds a game to the wishlist
 	cout << "------------------------------------------" << endl;
 	tempSlot.displayWL();
 	cout << "\nIs everything correct? (Y/N) ";
-	error = yesNo(error);
+	error = yesNo();
 	if (error == 'N') {
 		cout << "The info has not been stored. Choose option '11' from the main menu if you want to try again" << endl;
 	}
@@ -749,7 +769,7 @@ void editWLitem(vector<Wishlist>& wishlist) {//edits a game's info in the wishli
 	string search, name, pub, dev, genre1, genre2, genre3, fullG, avail;
 	double price, size;
 	int found;
-	char yn, again;
+	char yn, again = 'N';
 	do {
 		cout << "Enter the name of the game you would like to edit the information for:" << endl;
 		cin.ignore(100, '\n');
@@ -782,7 +802,7 @@ void editWLitem(vector<Wishlist>& wishlist) {//edits a game's info in the wishli
 				cout << "\nIs everything correct?" << endl;
 				tempSlot.displayWL();
 				cout << "\nY/N : ";
-				yn = yesNo(yn);
+				yn = yesNo();
 				if (yn == 'Y') {
 					wishlist[found] = tempSlot;
 				}
@@ -791,11 +811,13 @@ void editWLitem(vector<Wishlist>& wishlist) {//edits a game's info in the wishli
 			} while (yn == 'N');
 			writeWLToFiles(wishlist);
 			cout << "The new information is now stored!" << endl << endl;
+			cout << "Edit another game? (Y/N): ";
+			again = yesNo();
 		}
 		else {
 			cout << "The game you are trying to edit could not be found.." << endl;
 			cout << "Would you like to try again? (Y/N):";
-			again = yesNo(again);
+			again = yesNo();
 		}
 	} while (again == 'Y');
 }
@@ -815,7 +837,7 @@ void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist) {//move
 		cout << "FOUND!" << endl;
 		wishlist[found].displayWL();
 		cout << "\nPlease confirm this game was purchased and should be moved to your inventory. (Y/N)" << endl;
-		yn = yesNo(yn);
+		yn = yesNo();
 		name = wishlist[found].getWLName();
 		price = wishlist[found].getWLPrice();
 		pub = wishlist[found].getWLPub();
@@ -840,6 +862,7 @@ void moveToInv(vector<Inventory>& inventory, vector<Wishlist>& wishlist) {//move
 	
 
 }
+
 void removeWLitem(vector<Wishlist>& wishlist, string nameSearch) {//removes a game form the wishlist
 	int x = -1;
 	x = searchWLNames(wishlist, nameSearch);
@@ -854,12 +877,13 @@ void removeWLitem(vector<Wishlist>& wishlist, string nameSearch) {//removes a ga
 	}
 	
 }
+
 void writeWLToFiles(vector<Wishlist> wishlist) {//writes the information in the wishlist vector to each respective file
 	fstream writeNames, writePrices, writePubs, writeDevs, writeGenre1, writeGenre2, writeGenre3, writeSizes, writeRatings;
 
 	writeNames.open("namesWL.txt", ios::out); writePrices.open("pricesWL.txt", ios::out); writePubs.open("pubsWL.txt", ios::out);
 	writeDevs.open("devsWL.txt", ios::out); writeGenre1.open("genre1WL.txt", ios::out); writeGenre2.open("genre2WL.txt", ios::out);
-	writeGenre3.open("genre3WL.txt", ios::out); writeSizes.open("sizesWL.dat", ios::out | ios::binary); writeRatings.open("datesWL.txt", ios::out || ios::binary);
+	writeGenre3.open("genre3WL.txt", ios::out); writeSizes.open("sizesWL.dat", ios::out | ios::binary); writeRatings.open("datesWL.txt", ios::out);
 
 	for (int i = 0; i < wishlist.size(); i++) {
 		writeNames << wishlist[i].getWLName() << "\n";
@@ -915,7 +939,8 @@ string fullGenreMaker(string genre1, string genre2, string genre3) {//combines t
 	fullGenre = genre1 + " " + genre2 + " " + genre3;
 	return fullGenre;
 }
-char yesNo(char yn) {//converts a user input char to uppercase and confirms it is 'Y' or 'N'
+char yesNo() {//converts a user input char to uppercase and confirms it is 'Y' or 'N'
+	char yn;
 	cin >> yn;
 	yn = toupper(yn);
 	while (yn != 'Y' && yn != 'N') {
